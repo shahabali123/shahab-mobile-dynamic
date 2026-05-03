@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://shahabmobile.netlify.app/sitemap.xml

@@ -33,7 +33,7 @@ function renderProducts() {
                 ${isLowStock ? `<span class="bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">ONLY ${p.stock} LEFT</span>` : ''}
             </div>
             <div class="aspect-square rounded-2xl overflow-hidden bg-slate-50 mb-6 relative">
-                <img src="${p.images[0]}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110 cursor-pointer" onclick="viewDetails(${p.id})">
+                <img src="${p.images[0]}" alt="${p.name} - Shahab Mobile" class="w-full h-full object-cover transition duration-500 group-hover:scale-110 cursor-pointer" onclick="viewDetails(${p.id})">
                 ${!isOutOfStock ? `
                     <button onclick="addToCart(${p.id})" class="absolute bottom-4 right-4 bg-white text-slate-900 w-12 h-12 rounded-xl shadow-xl flex items-center justify-center translate-y-20 group-hover:translate-y-0 transition duration-300 hover:bg-blue-600 hover:text-white">
                         <i class="fas fa-plus"></i>
@@ -128,10 +128,10 @@ function viewDetails(id) {
     
     // Gallery System
     const mainImgContainer = document.getElementById('modal-main-image');
-    mainImgContainer.innerHTML = `<img src="${p.images[0]}" class="max-w-full max-h-full object-contain animate-in fade-in duration-500" id="current-modal-img">`;
+    mainImgContainer.innerHTML = `<img src="${p.images[0]}" alt="${p.name}" class="max-w-full max-h-full object-contain animate-in fade-in duration-500" id="current-modal-img">`;
     
     document.getElementById('modal-thumbnails').innerHTML = p.images.map((img, i) => 
-        `<img src="${img}" onclick="updateModalImage('${img}')" class="w-20 h-20 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-blue-500 transition shadow-sm">`
+        `<img src="${img}" alt="${p.name} view ${i+1}" onclick="updateModalImage('${img}')" class="w-20 h-20 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-blue-500 transition shadow-sm">`
     ).join('');
 
     document.getElementById('modal-specs').innerHTML = `
@@ -210,7 +210,7 @@ function updateCartUI() {
         totalPrice += item.price;
         return `
             <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-in slide-in-from-right duration-300">
-                <img src="${item.images[0]}" class="w-16 h-16 object-cover rounded-xl">
+                <img src="${item.images[0]}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl">
                 <div class="flex-grow">
                     <p class="font-bold text-slate-800">${item.name}</p>
                     <p class="text-sm text-blue-600 font-bold">Rs. ${item.price.toLocaleString()}</p>
