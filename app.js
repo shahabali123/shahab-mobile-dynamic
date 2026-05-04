@@ -1,4 +1,5 @@
 let cart = JSON.parse(localStorage.getItem('shahab_cart')) || [];
+let compareList = JSON.parse(localStorage.getItem('shahab_compare_list')) || []; // New: Comparison list
 let currentPage = 1;
 const itemsPerPage = 8;
 
@@ -58,6 +59,105 @@ function renderProducts() {
 
     updateCartUI();
     renderPaginationControls(totalPages);
+    updateCompareUI(); // Call on load to update floating button state
+}
+
+function compareProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    if (compareList.includes(id)) {
+        showToast(`${product.name} is already in comparison list.`);
+        return;
+    }
+
+    if (compareList.length < 2) {
+        compareList.push(id);
+        saveCompareList();
+        updateCompareUI();
+        if (compareList.length === 1) {
+            showToast(`${product.name} added for comparison. Select one more product.`);
+        } else if (compareList.length === 2) {
+            showToast(`Two products selected for comparison. Click 'Compare' button to view.`);
+            openCompareModal(); // Automatically open modal when 2 are selected
+        }
+    } else {
+        showToast("Comparison list is full. Please clear it first to add new products.");
+    }
+}
+
+function saveCompareList() {
+    localStorage.setItem('shahab_compare_list', JSON.stringify(compareList));
+}
+
+function updateCompareUI() {
+    const compareCount = document.getElementById('compare-count');
+    const floatingCompareBtn = document.getElementById('floating-compare-btn');
+
+    if (compareCount) {
+        compareCount.innerText = compareList.length;
+    }
+
+    if (floatingCompareBtn) {
+        if (compareList.length > 0) {
+            floatingCompareBtn.classList.remove('hidden');
+        } else {
+            floatingCompareBtn.classList.add('hidden');
+        }
+        if (compareList.length === 2) {
+            floatingCompareBtn.classList.add('bg-blue-600', 'text-white');
+            floatingCompareBtn.classList.remove('bg-white', 'text-slate-900');
+        } else {
+            floatingCompareBtn.classList.remove('bg-blue-600', 'text-white');
+            floatingCompareBtn.classList.add('bg-white', 'text-slate-900');
+        }
+    }
+}
+
+function openCompareModal() {
+    if (compareList.length !== 2) {
+        showToast("Please select exactly two products to compare.");
+        return;
+    }
+
+    const product1 = products.find(p => p.id === compareList[0]);
+    const product2 = products.find(p => p.id === compareList[1]);
+
+    if (!product1 || !product2) {
+        showToast("Could not find products for comparison.");
+        clearCompareList();
+        return;
+    }
+
+    document.getElementById('compare-modal-product1-name').innerText = product1.name;
+    document.getElementById('compare-modal-product1-brand').innerText = product1.brand;
+    document.getElementById('compare-modal-product1-price').innerText = `Rs. ${product1.price.toLocaleString()}`;
+    document.getElementById('compare-modal-product1-image').src = product1.images[0];
+    document.getElementById('compare-modal-product1-ram').innerText = product1.specs.ram;
+    document.getElementById('compare-modal-product1-storage').innerText = product1.specs.storage;
+    document.getElementById('compare-modal-product1-battery').innerText = product1.specs.battery;
+
+    document.getElementById('compare-modal-product2-name').innerText = product2.name;
+    document.getElementById('compare-modal-product2-brand').innerText = product2.brand;
+    document.getElementById('compare-modal-product2-price').innerText = `Rs. ${product2.price.toLocaleString()}`;
+    document.getElementById('compare-modal-product2-image').src = product2.images[0];
+    document.getElementById('compare-modal-product2-ram').innerText = product2.specs.ram;
+    document.getElementById('compare-modal-product2-storage').innerText = product2.specs.storage;
+    document.getElementById('compare-modal-product2-battery').innerText = product2.specs.battery;
+
+    document.getElementById('compare-modal').classList.remove('hidden');
+}
+
+function closeCompareModal() {
+    document.getElementById('compare-modal').classList.add('hidden');
+}
+
+function clearCompareList() {
+    compareList = [];
+    saveCompareList();
+    updateCompareUI();
+    showToast("Comparison list cleared.");
+    closeCompareModal(); // Close modal if open
 }
 
 function renderPaginationControls(totalPages) {
@@ -145,7 +245,6 @@ function viewDetails(id) {
     modalDesc.innerHTML = `
         <div class="flex gap-4 mb-6">
             <div class="flex items-center gap-2 text-[11px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100"><i class="fas fa-shield-alt"></i> Official Warranty</div>
-            <div class="flex items-center gap-2 text-[11px] font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100"><i class="fas fa-sync"></i> 7 Days Replacement</div>
         </div>
         ${p.description}
     `;
@@ -186,11 +285,6 @@ function addToCart(id) {
     cart.push(product);
     saveCart();
     showToast(`${product.name} added to cart! Go to cart to place order.`);
-}
-
-function compareProduct(id) {
-    const p = products.find(prod => prod.id === id);
-    alert(`Compare mode for ${p.name} activated! (Feature coming soon)`);
 }
 
 function saveCart() {
@@ -268,4 +362,4 @@ document.addEventListener('click', (e) => {
 });
 
 // Initial Render
-renderProducts();
+renderProducts(); // This will also call updateCompareUI()

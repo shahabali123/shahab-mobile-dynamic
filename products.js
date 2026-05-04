@@ -170,7 +170,7 @@ const products = [
         brand: "Redmi",
         price: 93000,
         description: "The ultimate Redmi experience. Pro cameras, pro performance, and an elegant premium design.",
-        images: ["./images/redmi-note-15.webp"],
+        images: ["./images/redmi-note-15-pro.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 3,
         freeDelivery: true
@@ -214,7 +214,7 @@ const products = [
         brand: "Vgotel",
         price: 25000,
         description: "The Vgotel New 15 Pro offers a modern design and capable performance at an entry-level price.",
-        images: ["https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/vgotel-new-15-pro.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 12,
         freeDelivery: true
@@ -225,7 +225,7 @@ const products = [
         brand: "Vgotel",
         price: 25500,
         description: "Smart 8 Go is designed for efficiency and style, keeping you connected throughout the day.",
-        images: ["https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/vgotel-smart-8-go.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 15,
         freeDelivery: true
@@ -236,7 +236,7 @@ const products = [
         brand: "Itel",
         price: 16800,
         description: "Compact and reliable, the Itel P17 Pro is an ideal choice for essential smartphone needs.",
-        images: ["https://images.unsplash.com/photo-1520189391039-497743f07a51?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/itel-p17-pro.webp"],
         specs: { ram: "2GB", storage: "32GB", battery: "4000 mAh" },
         stock: 10,
         freeDelivery: false
@@ -247,7 +247,7 @@ const products = [
         brand: "Itel",
         price: 22500,
         description: "Itel A100 C offers plenty of storage for your essentials in a sleek, lightweight body.",
-        images: ["https://images.unsplash.com/photo-1570194065650-d99fb4b8ccb0?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/itel-a100-c.webp"],
         specs: { ram: "2GB", storage: "64GB", battery: "5000 mAh" },
         stock: 18,
         freeDelivery: true
@@ -258,7 +258,7 @@ const products = [
         brand: "Itel",
         price: 25500,
         description: "Enjoy smoother performance with 4GB RAM on the Itel A100 C model.",
-        images: ["https://images.unsplash.com/photo-1570194065650-d99fb4b8ccb0?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/itel-a100-c.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 14,
         freeDelivery: true
@@ -269,7 +269,7 @@ const products = [
         brand: "Itel",
         price: 31500,
         description: "Itel City 200 features a massive display and generous 128GB storage for your media needs.",
-        images: ["https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/itel-city-200.webp"],
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 9,
         freeDelivery: true
@@ -280,7 +280,7 @@ const products = [
         brand: "Itel",
         price: 53000,
         description: "High performance meets high storage capacity. Itel Super 26 Ultra is the ultimate budget powerhouse.",
-        images: ["https://images.unsplash.com/photo-1533228100845-08145b01de14?auto=format&fit=crop&q=80&w=800"],
+        images: ["./images/itel-super-26-ultra.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 7,
         freeDelivery: true
