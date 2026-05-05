@@ -1,150 +1,114 @@
+// State Management
 let cart = JSON.parse(localStorage.getItem('shahab_cart')) || [];
-let compareList = JSON.parse(localStorage.getItem('shahab_compare_list')) || []; // New: Comparison list
+let compareList = JSON.parse(localStorage.getItem('shahab_compare')) || [];
 let currentPage = 1;
 const itemsPerPage = 8;
 
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+    updateCompareUI();
+    renderProducts();
+});
+
+// Render Products
 function renderProducts() {
     const grid = document.getElementById('product-grid');
-    const brandFilter = document.getElementById('brandFilter');
-    const searchBar = document.getElementById('searchBar');
+    if (!grid) return;
+
+    let filtered = products;
     
-    const brand = brandFilter ? brandFilter.value : "All";
-    const search = searchBar ? searchBar.value.toLowerCase() : "";
+    // Apply Brand Filter
+    const brand = document.getElementById('brandFilter')?.value || 'All';
+    if (brand !== 'All') filtered = filtered.filter(p => p.brand === brand);
 
-    const filtered = products.filter(p => 
-        (window.filterOnlyOffers ? p.oldPrice : true) &&
-        (brand === "All" || p.brand === brand) &&
-        (p.name.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search))
-    );
+    // Apply Offers Filter (if on offers page)
+    if (window.filterOnlyOffers) {
+        filtered = filtered.filter(p => p.freeDelivery === true);
+    }
 
-    // Pagination logic
-    const totalPages = Math.ceil(filtered.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+    // Pagination
+    const start = (currentPage - 1) * itemsPerPage;
+    const paginated = filtered.slice(start, start + itemsPerPage);
 
-    grid.innerHTML = paginatedItems.map(p => {
-        const isOutOfStock = p.stock === 0;
-        const isLowStock = p.stock > 0 && p.stock < 5;
-
-        return `
-        <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 product-card group relative">
-            <div class="absolute top-6 left-6 z-10 flex flex-col gap-2">
-                ${p.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">FREE DELIVERY</span>' : ''}
-                ${isOutOfStock ? '<span class="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">OUT OF STOCK</span>' : ''}
-                ${isLowStock ? `<span class="bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">ONLY ${p.stock} LEFT</span>` : ''}
+    grid.innerHTML = paginated.map(product => `
+        <div class="product-card bg-white rounded-3xl p-5 border border-slate-100 group relative">
+            ${product.freeDelivery ? '<span class="absolute top-4 left-4 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full z-10 shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
+            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="showDetails(${product.id})">
+                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500">
             </div>
-            <div class="aspect-square rounded-2xl overflow-hidden bg-slate-50 mb-6 relative">
-                <img src="${p.images[0]}" alt="${p.name} - Shahab Mobile" class="w-full h-full object-cover transition duration-500 group-hover:scale-110 cursor-pointer" onclick="viewDetails(${p.id})">
-                ${!isOutOfStock ? `
-                    <button onclick="addToCart(${p.id})" class="absolute bottom-4 right-4 bg-white text-slate-900 w-12 h-12 rounded-xl shadow-xl flex items-center justify-center translate-y-20 group-hover:translate-y-0 transition duration-300 hover:bg-blue-600 hover:text-white">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                ` : `
-                    <div class="absolute inset-0 bg-white/20 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition pointer-events-none text-red-600 font-bold">Sold Out</div>
-                `}
+            <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
+            <h3 class="font-bold text-slate-800 mb-2 truncate" title="${product.name}">${product.name}</h3>
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
             </div>
-            <div class="px-2">
-                <p class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-1">${p.brand}</p>
-                <h3 class="font-bold text-xl mb-1 text-slate-800 line-clamp-1">${p.name}</h3>
-                <div class="flex justify-between items-center mt-4">
-                    <div>
-                        ${p.oldPrice ? `<p class="text-slate-400 line-through text-xs font-bold">Rs. ${p.oldPrice.toLocaleString()}</p>` : ''}
-                        <p class="text-slate-900 font-extrabold text-xl">Rs. ${p.price.toLocaleString()}</p>
-                    </div>
-                    <button onclick="compareProduct(${p.id})" class="text-slate-300 hover:text-blue-500 transition"><i class="fas fa-exchange-alt"></i></button>
-                </div>
+            <div class="flex gap-2">
+                <button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>
+                <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-blue-600 hover:text-blue-600'} transition">
+                    <i class="fas fa-balance-scale"></i>
+                </button>
             </div>
         </div>
-    `}).join('');
+    `).join('');
 
-    updateCartUI();
-    renderPaginationControls(totalPages);
-    updateCompareUI(); // Call on load to update floating button state
+    renderPagination(filtered.length);
 }
 
-function compareProduct(id) {
-    const product = products.find(p => p.id === id);
-    if (!product) return;
-
-    if (compareList.includes(id)) {
-        showToast(`${product.name} is already in comparison list.`);
-        return;
-    }
-
-    if (compareList.length < 2) {
-        compareList.push(id);
-        saveCompareList();
-        updateCompareUI();
-        if (compareList.length === 1) {
-            showToast(`${product.name} added for comparison. Select one more product.`);
-        } else if (compareList.length === 2) {
-            showToast(`Two products selected for comparison. Click 'Compare' button to view.`);
-            openCompareModal(); // Automatically open modal when 2 are selected
-        }
+// Comparison Logic
+function toggleCompare(id) {
+    const index = compareList.indexOf(id);
+    if (index > -1) {
+        compareList.splice(index, 1);
+        showToast("Removed from comparison");
     } else {
-        showToast("Comparison list is full. Please clear it first to add new products.");
+        if (compareList.length >= 2) {
+            showToast("You can only compare 2 products at a time!");
+            return;
+        }
+        compareList.push(id);
+        showToast("Added to comparison");
     }
-}
-
-function saveCompareList() {
-    localStorage.setItem('shahab_compare_list', JSON.stringify(compareList));
+    localStorage.setItem('shahab_compare', JSON.stringify(compareList));
+    updateCompareUI();
+    renderProducts();
 }
 
 function updateCompareUI() {
-    const compareCount = document.getElementById('compare-count');
-    const floatingCompareBtn = document.getElementById('floating-compare-btn');
+    const btn = document.getElementById('floating-compare-btn');
+    const count = document.getElementById('compare-count');
+    if (!btn || !count) return;
 
-    if (compareCount) {
-        compareCount.innerText = compareList.length;
-    }
-
-    if (floatingCompareBtn) {
-        if (compareList.length > 0) {
-            floatingCompareBtn.classList.remove('hidden');
-        } else {
-            floatingCompareBtn.classList.add('hidden');
-        }
-        if (compareList.length === 2) {
-            floatingCompareBtn.classList.add('bg-blue-600', 'text-white');
-            floatingCompareBtn.classList.remove('bg-white', 'text-slate-900');
-        } else {
-            floatingCompareBtn.classList.remove('bg-blue-600', 'text-white');
-            floatingCompareBtn.classList.add('bg-white', 'text-slate-900');
-        }
+    if (compareList.length > 0) {
+        btn.classList.remove('hidden');
+        count.innerText = compareList.length;
+    } else {
+        btn.classList.add('hidden');
     }
 }
 
 function openCompareModal() {
-    if (compareList.length !== 2) {
-        showToast("Please select exactly two products to compare.");
+    if (compareList.length < 2) {
+        showToast("Please select 2 products to compare");
         return;
     }
-
-    const product1 = products.find(p => p.id === compareList[0]);
-    const product2 = products.find(p => p.id === compareList[1]);
-
-    if (!product1 || !product2) {
-        showToast("Could not find products for comparison.");
-        clearCompareList();
-        return;
-    }
-
-    document.getElementById('compare-modal-product1-name').innerText = product1.name;
-    document.getElementById('compare-modal-product1-brand').innerText = product1.brand;
-    document.getElementById('compare-modal-product1-price').innerText = `Rs. ${product1.price.toLocaleString()}`;
-    document.getElementById('compare-modal-product1-image').src = product1.images[0];
-    document.getElementById('compare-modal-product1-ram').innerText = product1.specs.ram;
-    document.getElementById('compare-modal-product1-storage').innerText = product1.specs.storage;
-    document.getElementById('compare-modal-product1-battery').innerText = product1.specs.battery;
-
-    document.getElementById('compare-modal-product2-name').innerText = product2.name;
-    document.getElementById('compare-modal-product2-brand').innerText = product2.brand;
-    document.getElementById('compare-modal-product2-price').innerText = `Rs. ${product2.price.toLocaleString()}`;
-    document.getElementById('compare-modal-product2-image').src = product2.images[0];
-    document.getElementById('compare-modal-product2-ram').innerText = product2.specs.ram;
-    document.getElementById('compare-modal-product2-storage').innerText = product2.specs.storage;
-    document.getElementById('compare-modal-product2-battery').innerText = product2.specs.battery;
-
+    const p1 = products.find(p => p.id === compareList[0]);
+    const p2 = products.find(p => p.id === compareList[1]);
+    
+    const content = document.getElementById('compare-content');
+    const createSlot = (p) => `
+        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center text-center">
+            <img src="${p.images[0]}" class="w-32 h-32 object-contain mb-4 rounded-xl">
+            <h4 class="font-bold text-lg mb-2 text-slate-800">${p.name}</h4>
+            <p class="text-2xl font-black text-blue-600 mb-6">Rs. ${p.price.toLocaleString()}</p>
+            <div class="w-full space-y-3">
+                <div class="bg-white p-3 rounded-xl shadow-sm flex justify-between"><span class="text-slate-400 text-xs font-bold">RAM</span> <span class="font-bold text-sm">${p.specs.ram}</span></div>
+                <div class="bg-white p-3 rounded-xl shadow-sm flex justify-between"><span class="text-slate-400 text-xs font-bold">STORAGE</span> <span class="font-bold text-sm">${p.specs.storage}</span></div>
+                <div class="bg-white p-3 rounded-xl shadow-sm flex justify-between"><span class="text-slate-400 text-xs font-bold">BATTERY</span> <span class="font-bold text-sm">${p.specs.battery}</span></div>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = createSlot(p1) + createSlot(p2);
     document.getElementById('compare-modal').classList.remove('hidden');
 }
 
@@ -154,172 +118,30 @@ function closeCompareModal() {
 
 function clearCompareList() {
     compareList = [];
-    saveCompareList();
+    localStorage.setItem('shahab_compare', JSON.stringify(compareList));
     updateCompareUI();
-    showToast("Comparison list cleared.");
-    closeCompareModal(); // Close modal if open
-}
-
-function renderPaginationControls(totalPages) {
-    const container = document.getElementById('pagination-controls');
-    if (totalPages <= 1) {
-        container.innerHTML = '';
-        return;
-    }
-
-    let html = `
-        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <span class="text-sm font-bold text-slate-500 uppercase tracking-widest px-4">Page ${currentPage} of ${totalPages}</span>
-        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-sm">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-    `;
-    container.innerHTML = html;
-}
-
-function changePage(page) {
-    currentPage = page;
     renderProducts();
-    window.scrollTo({ top: document.getElementById('product-grid').offsetTop - 100, behavior: 'smooth' });
+    closeCompareModal();
 }
 
-function handleSearch(e) {
-    currentPage = 1; // Reset to first page on search
-    const query = e.target.value.toLowerCase();
-    const suggestionsContainer = document.getElementById('search-suggestions');
-    
-    if (!query) {
-        suggestionsContainer.classList.add('hidden');
-        renderProducts();
-        return;
-    }
-
-    const matches = products.filter(p => 
-        p.name.toLowerCase().includes(query) || p.brand.toLowerCase().includes(query)
-    ).slice(0, 5);
-
-    if (matches.length > 0) {
-        suggestionsContainer.innerHTML = matches.map(p => `
-            <div onclick="viewDetails(${p.id}); document.getElementById('search-suggestions').classList.add('hidden');" class="flex items-center gap-4 p-4 hover:bg-blue-50 cursor-pointer transition border-b border-slate-50 last:border-none">
-                <img src="${p.images[0]}" class="w-10 h-10 object-cover rounded-lg">
-                <div>
-                    <p class="font-bold text-slate-800 text-sm">${p.name}</p>
-                    <p class="text-xs text-slate-500">${p.brand}</p>
-                </div>
-            </div>
-        `).join('');
-        suggestionsContainer.classList.remove('hidden');
-    } else {
-        suggestionsContainer.classList.add('hidden');
-    }
-    renderProducts();
-}
-
-function viewDetails(id) {
-    const p = products.find(prod => prod.id === id);
-    if (!p) return;
-
-    document.getElementById('modal-title').innerText = p.name;
-    document.getElementById('modal-brand-badge').innerHTML = `<span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-100">${p.brand}</span>`;
-    document.getElementById('modal-price').innerText = `Rs. ${p.price.toLocaleString()}`;
-    document.getElementById('modal-desc').innerText = p.description;
-    
-    // Gallery System
-    const mainImgContainer = document.getElementById('modal-main-image');
-    mainImgContainer.innerHTML = `<img src="${p.images[0]}" alt="${p.name}" class="max-w-full max-h-full object-contain animate-in fade-in duration-500" id="current-modal-img">`;
-    
-    document.getElementById('modal-thumbnails').innerHTML = p.images.map((img, i) => 
-        `<img src="${img}" alt="${p.name} view ${i+1}" onclick="updateModalImage('${img}')" class="w-20 h-20 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-blue-500 transition shadow-sm">`
-    ).join('');
-
-    document.getElementById('modal-specs').innerHTML = `
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">RAM</p><p class="text-sm font-bold">${p.specs.ram}</p></div>
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Storage</p><p class="text-sm font-bold">${p.specs.storage}</p></div>
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Battery</p><p class="text-sm font-bold">${p.specs.battery}</p></div>
-    `;
-
-    // Trust Badges in Modal
-    const modalDesc = document.getElementById('modal-desc');
-    modalDesc.innerHTML = `
-        <div class="flex gap-4 mb-6">
-            <div class="flex items-center gap-2 text-[11px] font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100"><i class="fas fa-shield-alt"></i> Official Warranty</div>
-        </div>
-        ${p.description}
-    `;
-
-    const addBtn = document.getElementById('modal-add-btn');
-    if (p.stock === 0) {
-        addBtn.innerText = "Out of Stock";
-        addBtn.disabled = true;
-        addBtn.classList.replace('bg-blue-600', 'bg-slate-300');
-        addBtn.classList.remove('hover:bg-blue-700');
-    } else {
-        addBtn.innerText = "Add to Cart";
-        addBtn.disabled = false;
-        addBtn.classList.replace('bg-slate-300', 'bg-blue-600');
-        addBtn.classList.add('hover:bg-blue-700');
-        addBtn.onclick = () => { addToCart(p.id); closeDetails(); };
-    }
-
-    document.getElementById('product-modal').classList.remove('hidden');
-}
-
-function closeDetails() {
-    document.getElementById('product-modal').classList.add('hidden');
-}
-
-function updateModalImage(src) {
-    document.getElementById('current-modal-img').src = src;
-}
-
+// Cart Logic
 function addToCart(id) {
     const product = products.find(p => p.id === id);
-    
-    if (product.stock === 0) {
-        showToast("Sorry, this item is out of stock!");
-        return;
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({...product, quantity: 1});
     }
-
-    cart.push(product);
-    saveCart();
-    showToast(`${product.name} added to cart! Go to cart to place order.`);
-}
-
-function saveCart() {
     localStorage.setItem('shahab_cart', JSON.stringify(cart));
-    updateCartUI();
+    updateCartCount();
+    showToast(`Added ${product.name} to cart`);
 }
 
-function updateCartUI() {
-    const itemsContainer = document.getElementById('cart-items');
-    const count = document.getElementById('cart-count');
-    const total = document.getElementById('cart-total');
-    
-    count.innerText = cart.length;
-    let totalPrice = 0;
-
-    itemsContainer.innerHTML = cart.map((item, index) => {
-        totalPrice += item.price;
-        return `
-            <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm animate-in slide-in-from-right duration-300">
-                <img src="${item.images[0]}" alt="${item.name}" class="w-16 h-16 object-cover rounded-xl">
-                <div class="flex-grow">
-                    <p class="font-bold text-slate-800">${item.name}</p>
-                    <p class="text-sm text-blue-600 font-bold">Rs. ${item.price.toLocaleString()}</p>
-                </div>
-                <button onclick="removeFromCart(${index})" class="w-8 h-8 flex items-center justify-center rounded-full text-slate-300 hover:text-red-500 hover:bg-red-50 transition"><i class="fas fa-trash-alt"></i></button>
-            </div>
-        `;
-    }).join('');
-    
-    total.innerText = totalPrice.toLocaleString();
-}
-
-function removeFromCart(index) {
-    cart.splice(index, 1);
-    saveCart();
+function updateCartCount() {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.querySelectorAll('#cart-count').forEach(el => el.innerText = count);
+    renderCart();
 }
 
 function toggleCart() {
@@ -327,39 +149,72 @@ function toggleCart() {
     sidebar.classList.toggle('translate-x-full');
 }
 
+function renderCart() {
+    const itemsContainer = document.getElementById('cart-items');
+    const totalEl = document.getElementById('cart-total');
+    if (!itemsContainer) return;
+
+    let total = 0;
+    itemsContainer.innerHTML = cart.map(item => {
+        total += item.price * item.quantity;
+        return `
+            <div class="flex gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                <img src="${item.images[0]}" class="w-16 h-16 object-contain">
+                <div class="flex-grow">
+                    <h4 class="font-bold text-sm">${item.name}</h4>
+                    <p class="text-blue-600 font-bold text-sm">Rs. ${item.price.toLocaleString()}</p>
+                    <div class="flex items-center gap-3 mt-2">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 rounded-full bg-slate-100">-</button>
+                        <span class="font-bold">${item.quantity}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 rounded-full bg-slate-100">+</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    totalEl.innerText = total.toLocaleString();
+}
+
+function changeQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    item.quantity += delta;
+    if (item.quantity <= 0) {
+        cart = cart.filter(i => i.id !== id);
+    }
+    localStorage.setItem('shahab_cart', JSON.stringify(cart));
+    updateCartCount();
+}
+
+function checkoutWhatsApp() {
+    if (cart.length === 0) return alert("Cart is empty");
+    let text = "Hello Shahab Mobile, I want to order:\n\n";
+    cart.forEach(item => text += `• ${item.name} x ${item.quantity} (Rs. ${(item.price * item.quantity).toLocaleString()})\n`);
+    text += `\nTotal: Rs. ${document.getElementById('cart-total').innerText}`;
+    window.open(`https://wa.me/923420475187?text=${encodeURIComponent(text)}`);
+}
+
+// Toast System
 function showToast(msg) {
     const toast = document.getElementById('toast');
-    document.getElementById('toast-msg').innerText = msg;
+    const msgEl = document.getElementById('toast-msg');
+    msgEl.innerText = msg;
     toast.classList.remove('hidden');
-    
-    if (window.toastTimer) clearTimeout(window.toastTimer);
-    window.toastTimer = setTimeout(hideToast, 5000);
+    setTimeout(hideToast, 4000);
 }
 
 function hideToast() {
     document.getElementById('toast').classList.add('hidden');
 }
 
-function checkoutWhatsApp() {
-    if (cart.length === 0) return alert("Cart is empty!");
+// Pagination Logic
+function renderPagination(totalItems) {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const container = document.getElementById('pagination-controls');
+    if (!container) return;
 
-    let message = "Salaam Shahab Mobile! I want to order:\n\n";
-    cart.forEach((item, i) => {
-        message += `${i+1}. ${item.name} - Rs. ${item.price}\n`;
-    });
-    message += `\nTotal: Rs. ${document.getElementById('cart-total').innerText}`;
-    
-    const phone = "923420475187";
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
-}
-
-// Close suggestions when clicking outside
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('#searchBar') && !e.target.closest('#search-suggestions')) {
-        document.getElementById('search-suggestions')?.classList.add('hidden');
+    let html = '';
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button onclick="currentPage=${i}; renderProducts(); window.scrollTo({top: 400, behavior: 'smooth'});" class="w-10 h-10 rounded-xl font-bold transition ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-blue-600'}">${i}</button>`;
     }
-});
-
-// Initial Render
-renderProducts(); // This will also call updateCompareUI()
+    container.innerHTML = html;
+}
