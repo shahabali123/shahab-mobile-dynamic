@@ -1,0 +1,21 @@
+{
+  "name": "Shahab Mobile",
+  "short_name": "Shahab Mobile",
+  "description": "Your one-stop shop for mobile phones in Mansehra. Easy installments, great offers!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "favicon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpg"
+    },
+    {
+      "src": "favicon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpg"
+    }
+  ]
+}

@@ -1,3 +1,26 @@
+/**
+ * SHAHAB MOBILE - PRODUCT DATA CONFIGURATION
+ * 
+ * BADGE LAGANE KA TAREEKA:
+ * Agar aap chahte hain k kisi product par badge nazar aaye, to uske object mein 
+ * 'badge' ki property add karein is tarah:
+ * 
+ * badge: { text: "APNA_TEXT", color: "bg-COLOR_NAME" }
+ * 
+ * Mash'hoor Colors:
+ * - Neela (Blue):  bg-blue-600
+ * - Surkh (Red):   bg-red-500
+ * - Narangi (Hot): bg-orange-500
+ * - Sabz (Green):  bg-emerald-500
+ * - Jamni (Purple):bg-purple-600
+ * 
+ * Agar badge nahi dikhana, to us product se 'badge' wali line hata dein.
+ * 
+ * INSTALLMENT (Policy: 30% Down Payment, 10-20% Markup):
+ * Agar product installment par dena hai, to product object mein:
+ * installment: true
+ * add karein.
+ */
 const products = [
     {
         id: 13,
@@ -8,7 +31,8 @@ const products = [
         images: ["./images/samsung-a07.avif"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 10,
-        freeDelivery: true
+        freeDelivery: true,
+        badge: { text: "NEW", color: "bg-blue-600" }
     },
     {
         id: 14,
@@ -19,7 +43,8 @@ const products = [
         images: ["./images/samsung-a07.avif"],
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 10,
-        freeDelivery: true
+        freeDelivery: true,
+        badge: { text: "BEST SELLER", color: "bg-emerald-500" }
     },
     {
         id: 15,
@@ -63,7 +88,8 @@ const products = [
         images: ["./images/samsung-a26-5g.avif"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 4,
-        freeDelivery: true
+        freeDelivery: true,
+        badge: { text: "HOT", color: "bg-orange-500" }
     },
     {
         id: 19,
@@ -118,7 +144,8 @@ const products = [
         images: ["./images/redmi-note-14.webp"],
         specs: { ram: "8GB", storage: "128GB", battery: "5000 mAh" },
         stock: 7,
-        freeDelivery: true
+        freeDelivery: true,
+        badge: { text: "POPULAR", color: "bg-purple-600" }
     },
     {
         id: 24,
@@ -162,7 +189,8 @@ const products = [
         images: ["./images/redmi-note-15.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 5,
-        freeDelivery: true
+        freeDelivery: true,
+        badge: { text: "TOP DEAL", color: "bg-red-600" }
     },
     {
         id: 28,
@@ -184,7 +212,8 @@ const products = [
         images: ["./images/tecno-spark-go-3.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 20,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 30,
@@ -195,7 +224,8 @@ const products = [
         images: ["./images/tecno-spark-40-pro.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 10,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 31,
@@ -206,7 +236,8 @@ const products = [
         images: ["./images/tecno-spark-40-pro-+.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 8,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 32,
@@ -250,7 +281,8 @@ const products = [
         images: ["./images/itel-a100-c.webp"],
         specs: { ram: "2GB", storage: "64GB", battery: "5000 mAh" },
         stock: 18,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 36,
@@ -261,7 +293,8 @@ const products = [
         images: ["./images/itel-a100-c.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 14,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 37,
@@ -272,7 +305,8 @@ const products = [
         images: ["./images/itel-city-200.webp"],
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 9,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     },
     {
         id: 38,
@@ -283,6 +317,7 @@ const products = [
         images: ["./images/itel-super-26-ultra.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 7,
-        freeDelivery: true
+        freeDelivery: true,
+        installment: true
     }
 ];
