@@ -378,5 +378,32 @@ const products = [
         installment: true,
         installmentText: "20% Advance, 9 Months Installments",
         freeDelivery: false
+    },
+    {
+        id: 42,
+        name: "Infinix Hot 60i (6GB-128GB)",
+        brand: "Infinix",
+        price: 45500,
+        description: "The Infinix Hot 60i delivers smooth performance and a vibrant display, perfect for daily multitasking and media.",
+        images: ["./images/infinix-hot-60-i.jpg"],
+        specs: { ram: "6GB", storage: "128GB", battery: "5000 mAh" },
+        stock: 12,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: true
+    },
+    {
+        id: 43,
+        name: "Infinix Note 50 (8GB-256GB)",
+        brand: "Infinix",
+        price: 82500,
+        description: "Experience flagship-level power with the Infinix Note 50. This special bundle includes a high-capacity powerbank for non-stop energy.",
+        images: ["./images/infinix-note-50.webp"],
+        specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
+        stock: 8,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: true,
+        badge: { text: "+ POWERBANK", color: "bg-purple-600" }
     }
 ];
