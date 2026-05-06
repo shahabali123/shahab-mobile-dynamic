@@ -10,7 +10,7 @@ const itemsPerPage = 8;
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateCompareUI();
-    renderProducts();
+    renderProducts(true, false);
 
     // Close suggestions when clicking outside
     document.addEventListener('click', (e) => {
@@ -44,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Render Products
-function renderProducts() {
+function renderProducts(resetPage = false, shouldScroll = false) {
+    if (resetPage) currentPage = 1;
+
     const grid = document.getElementById('product-grid');
     if (!grid) return;
 
@@ -122,6 +124,7 @@ function renderProducts() {
                 ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
                 ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
                 ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
+                ${product.installmentText ? `<span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.installmentText}</span>` : ''}
             </div>
             
             <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="showDetails(${product.id})">
@@ -143,10 +146,12 @@ function renderProducts() {
 
     renderPagination(filtered.length);
 
-    // Scroll to product grid after rendering
-    const productGrid = document.getElementById('product-grid');
-    if (productGrid) {
-        productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Scroll to product grid if requested
+    if (shouldScroll) {
+        const productGrid = document.getElementById('product-grid');
+        if (productGrid) {
+            productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 }
 
@@ -167,7 +172,7 @@ function resetFilters() {
     document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
     document.querySelectorAll('input[type="number"], input[type="text"]').forEach(i => i.value = '');
     document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-    renderProducts();
+    renderProducts(true, true);
 }
 
 // Comparison Logic
@@ -186,7 +191,7 @@ function toggleCompare(id) {
     }
     localStorage.setItem('shahab_compare', JSON.stringify(compareList));
     updateCompareUI();
-    renderProducts();
+    renderProducts(false, false);
 }
 
 function updateCompareUI() {
@@ -236,7 +241,7 @@ function clearCompareList() {
     compareList = [];
     localStorage.setItem('shahab_compare', JSON.stringify(compareList));
     updateCompareUI();
-    renderProducts();
+    renderProducts(false, false);
     closeCompareModal();
 }
 
@@ -381,24 +386,42 @@ function showDetails(id) {
     const modalActions = addBtn.parentElement;
     const existingInstallBtn = document.getElementById('modal-installment-btn');
     const existingCalc = document.getElementById('modal-calc-box');
+    const existingInstallmentText = document.getElementById('modal-installment-text');
+
+    if (existingInstallmentText) existingInstallmentText.remove();
     if (existingInstallBtn) existingInstallBtn.remove();
     if (existingCalc) existingCalc.remove();
 
     if (p.installment) {
-        const downPayment = Math.round(p.price * 0.30);
+        // Global config from products.js
+        const config = typeof installmentConfig !== 'undefined' ? installmentConfig : { advancePercentage: 20, plans: [] };
+        
+        const downPayment = Math.round(p.price * (config.advancePercentage / 100));
         const remaining = p.price - downPayment;
-        const month3 = Math.round((remaining * 1.10) / 3); // 10% markup for 3 months
-        const month6 = Math.round((remaining * 1.20) / 6); // 20% markup for 6 months
+
+        const planResults = config.plans.map(plan => ({
+            months: plan.months,
+            perMonth: Math.round((remaining * (1 + plan.markup / 100)) / plan.months)
+        }));
+
+        if (p.installmentText) {
+            const installmentTextEl = document.createElement('p');
+            installmentTextEl.id = 'modal-installment-text';
+            installmentTextEl.className = "text-blue-600 font-bold text-sm mb-4";
+            installmentTextEl.innerText = p.installmentText;
+            modalActions.insertBefore(installmentTextEl, addBtn);
+        }
 
         const calcBox = document.createElement('div');
         calcBox.id = 'modal-calc-box';
         calcBox.className = "mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-4";
         calcBox.innerHTML = `
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Installment Estimate (30% Down)</p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">Down Payment</p><p class="text-xs font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">3 Months</p><p class="text-xs font-bold text-blue-600">Rs. ${month3.toLocaleString()}/mo</p></div>
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">6 Months</p><p class="text-xs font-bold text-blue-600">Rs. ${month6.toLocaleString()}/mo</p></div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Installment Estimate (${config.advancePercentage}% Advance)</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">Advance</p><p class="text-[10px] font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
+                ${planResults.map(plan => `
+                    <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">${plan.months} Months</p><p class="text-[10px] font-bold text-blue-600">Rs. ${plan.perMonth.toLocaleString()}/mo</p></div>
+                `).join('')}
             </div>
         `;
         modalActions.insertBefore(calcBox, addBtn);
@@ -408,7 +431,8 @@ function showDetails(id) {
         instBtn.className = "w-full mt-3 bg-slate-100 text-slate-900 py-4 rounded-2xl font-bold hover:bg-slate-200 transition flex items-center justify-center gap-2 border border-slate-200";
         instBtn.innerHTML = `<i class="fas fa-hand-holding-usd text-blue-600"></i> Inquire Installment Plan`;
         instBtn.onclick = () => {
-            const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nDown Payment (Est): Rs. ${downPayment.toLocaleString()}`;
+            const options = config.plans.map(pl => pl.months).join(', ') + " Months";
+            const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nAdvance Payment (${config.advancePercentage}%): Rs. ${downPayment.toLocaleString()}\nPlan options: ${options}`;
             window.open(`https://wa.me/923420475187?text=${encodeURIComponent(msg)}`);
         };
         modalActions.appendChild(instBtn);
@@ -522,7 +546,7 @@ function renderPagination(totalItems) {
 
     let html = '';
     for (let i = 1; i <= totalPages; i++) {
-        html += `<button onclick="currentPage=${i}; renderProducts(); window.scrollTo({top: 400, behavior: 'smooth'});" class="w-10 h-10 rounded-xl font-bold transition ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-blue-600'}">${i}</button>`;
+        html += `<button onclick="currentPage=${i}; renderProducts(false, true);" class="w-10 h-10 rounded-xl font-bold transition ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-blue-600 focus:border-blue-600'}">${i}</button>`;
     }
     container.innerHTML = html;
 }

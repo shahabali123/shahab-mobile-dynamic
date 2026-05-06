@@ -21,6 +21,19 @@
  * installment: true
  * add karein.
  */
+
+const installmentConfig = {
+    advancePercentage: 20,
+    plans: [
+        { months: 3, markup: 10 },
+        { months: 6, markup: 20 },
+        { months: 9, markup: 30 }
+    ],
+    planSummary: "3, 6 & 9 Months Plans",
+    advanceText: "20% Advance Payment",
+    bannerDescription: "Itel, Infinix, aur Tecno ke latest mobiles ab asaan mahana qiston par available hain. Sirf 20% advance payment dein aur apna pasandida mobile ghar le jayein, 9 mahine ki asaan iqsaat par."
+};
+
 const products = [
     {
         id: 13,
@@ -198,7 +211,7 @@ const products = [
         brand: "Redmi",
         price: 93000,
         description: "The ultimate Redmi experience. Pro cameras, pro performance, and an elegant premium design.",
-        images: ["./images/redmi-note-15-pro.webp"],
+        images: ["./images/Redmi-note-15-pro-blue.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 3,
         freeDelivery: true
@@ -207,13 +220,14 @@ const products = [
         id: 29,
         name: "Tecno Spark Go 3 (4GB-64GB)",
         brand: "Tecno",
-        price: 30500,
+        price: 31000,
         description: "Reliable and pocket-friendly. Spark Go 3 offers great battery life and a smooth user experience.",
         images: ["./images/tecno-spark-go-3.webp"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 20,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 30,
@@ -225,7 +239,8 @@ const products = [
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 10,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 31,
@@ -237,7 +252,8 @@ const products = [
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 8,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 32,
@@ -267,7 +283,7 @@ const products = [
         brand: "Itel",
         price: 16800,
         description: "Compact and reliable, the Itel P17 Pro is an ideal choice for essential smartphone needs.",
-        images: ["./images/itel-p17-pro.webp"],
+        images: ["./images/itel-p-17-pro.webp"],
         specs: { ram: "2GB", storage: "32GB", battery: "4000 mAh" },
         stock: 10,
         freeDelivery: false
@@ -276,13 +292,14 @@ const products = [
         id: 35,
         name: "Itel A100 C (2GB-64GB)",
         brand: "Itel",
-        price: 22500,
+        price: 21500,
         description: "Itel A100 C offers plenty of storage for your essentials in a sleek, lightweight body.",
-        images: ["./images/itel-a100-c.webp"],
+        images: ["./images/itel-a-100-c.jpg"],
         specs: { ram: "2GB", storage: "64GB", battery: "5000 mAh" },
         stock: 18,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 36,
@@ -290,11 +307,12 @@ const products = [
         brand: "Itel",
         price: 25500,
         description: "Enjoy smoother performance with 4GB RAM on the Itel A100 C model.",
-        images: ["./images/itel-a100-c.webp"],
+        images: ["./images/itel-a-100-c.jpg"],
         specs: { ram: "4GB", storage: "64GB", battery: "5000 mAh" },
         stock: 14,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 37,
@@ -306,7 +324,8 @@ const products = [
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 9,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
     },
     {
         id: 38,
@@ -318,6 +337,46 @@ const products = [
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 7,
         freeDelivery: true,
-        installment: true
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments"
+    },
+    {
+        id: 39,
+        name: "Itel A100 4.5g (4GB-128GB)",
+        brand: "Itel",
+        price: 29000,
+        description: "Compact and reliable, the Itel A100 is an ideal choice for essential smartphone needs.",
+        images: ["./images/itel-a-1oo.webp"],
+        specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
+        stock: 10,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: false
+    },
+    {
+        id: 40,
+        name: "Infinix Smart 10 (4+4GB-64GB)",
+        brand: "Infinix",
+        price: 31000,
+        description: "Compact and reliable, the Infinix Smart 10 is an ideal choice for essential smartphone needs.",
+        images: ["./images/infinix-smart-10.webp"],
+        specs: { ram: "4+4GB", storage: "64GB", battery: "5000 mAh" },
+        stock: 10,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: false
+    },
+    {
+        id: 41,
+        name: "Tecno Spark 50 (6GB-128GB)",
+        brand: "Tecno",
+        price: 45000,
+        description: "Compact and reliable, the Tecno Spark 50 is an ideal choice for essential smartphone needs.",
+        images: ["./images/tecno-spark-50.webp"],
+        specs: { ram: "6GB", storage: "128GB", battery: "7000 mAh" },
+        stock: 10,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: false
     }
 ];

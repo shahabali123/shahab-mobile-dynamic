@@ -4,8 +4,8 @@ const heroConfig = {
     badge: "Trusted in Mansehra",
     brandName: "SHAHAB MOBILE",
     title: "Premium Devices. <br> Trusted Quality.",
-    description: "Mansehra's leading destination for original iPhones, Samsung, and top brands. Official warranty and easy installments on Shinkiari Road.",
-    image: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=800&auto=format&fit=crop",
+    description: "Mansehra's leading destination for original Phones, Samsung, and top brands. Official warranty and easy installments on Shinkiari Road.",
+    image: "./images/tecno-spark-go-3.webp",
     primaryBtn: { text: "Explore Collection", link: "#product-grid" },
     secondaryBtn: { text: "Latest Offers", link: "offers.html" },
     watermark: "SHAHAB" // Background mein bara text jo nazar ata hai
