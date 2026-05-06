@@ -168,6 +168,21 @@ function toggleFilters() {
     dropdown?.classList.toggle('hidden');
 }
 
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('menu-overlay');
+    if (!menu) return;
+    
+    const isOpening = menu.classList.contains('translate-x-full');
+    
+    menu.classList.toggle('translate-x-full');
+    overlay?.classList.toggle('hidden');
+    
+    // Toggle body scroll
+    const isOpen = !isOpening;
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+}
+
 function resetFilters() {
     document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
     document.querySelectorAll('input[type="number"], input[type="text"]').forEach(i => i.value = '');
