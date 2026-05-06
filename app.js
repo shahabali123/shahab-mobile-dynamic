@@ -142,15 +142,25 @@ function renderProducts() {
     `).join('');
 
     renderPagination(filtered.length);
+
+    // Scroll to product grid after rendering
+    const productGrid = document.getElementById('product-grid');
+    if (productGrid) {
+        productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
-// Helper to sync mobile and desktop search
-function syncSearchAndRender(val) {
+// Helper to sync mobile and desktop search without automatic rendering
+function syncSearch(val) {
     const dSearch = document.getElementById('searchBar');
     const mSearch = document.getElementById('searchBarMobile');
     if (dSearch) dSearch.value = val;
     if (mSearch) mSearch.value = val;
-    renderProducts();
+}
+
+function toggleFilters() {
+    const dropdown = document.getElementById('filters-dropdown');
+    dropdown?.classList.toggle('hidden');
 }
 
 function resetFilters() {
