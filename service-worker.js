@@ -7,7 +7,7 @@ const urlsToCache = [
     '/app.js',
     '/products.js',
     '/hero.js',
-    '/favicon.jpg', // Assuming favicon.jpg is in the root
+    '/images/tecno-spark-go-3.webp', 
     // Add other critical assets here (e.g., main CSS, common images)
 ];
 

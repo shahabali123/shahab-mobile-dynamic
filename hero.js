@@ -7,7 +7,8 @@ const heroConfig = {
     description: "Mansehra's leading destination for original Phones, Samsung, and top brands. Official warranty and easy installments on Shinkiari Road.",
     image: "./images/tecno-spark-go-3.webp",
     primaryBtn: { text: "Explore Collection", link: "#product-grid" },
-    secondaryBtn: { text: "Latest Offers", link: "offers.html" },
+    secondaryBtn: { text: "Latest Offers", link: "offers.html" }, 
+    installmentBtn: { text: "Easy Installments", link: "installments.html" }, // Added new button for Installments
     watermark: "SHAHAB" // Background mein bara text jo nazar ata hai
 };
 
@@ -35,6 +36,9 @@ function renderHero() {
                     </a>
                     <a href="${heroConfig.secondaryBtn.link}" class="bg-white/5 border border-white/10 px-10 py-5 rounded-2xl font-bold hover:bg-white/10 transition duration-300 backdrop-blur-md flex items-center gap-3">
                         ${heroConfig.secondaryBtn.text} <i class="fas fa-arrow-right text-xs text-indigo-400"></i>
+                    </a>
+                    <a href="${heroConfig.installmentBtn.link}" class="bg-green-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-green-500 transition shadow-2xl shadow-green-500/20 hover:-translate-y-1 duration-300 flex items-center gap-3">
+                        <i class="fas fa-hand-holding-usd"></i> ${heroConfig.installmentBtn.text}
                     </a>
                 </div>
             </div>
