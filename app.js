@@ -173,9 +173,9 @@ function toggleMobileMenu() {
     const overlay = document.getElementById('menu-overlay');
     if (!menu) return;
     
-    const isOpening = menu.classList.contains('translate-x-full');
+    const isOpening = menu.classList.contains('translate-x-[120%]');
     
-    menu.classList.toggle('translate-x-full');
+    menu.classList.toggle('translate-x-[120%]');
     overlay?.classList.toggle('hidden');
     
     // Fix: If opening, lock scroll. If closing, restore it.
