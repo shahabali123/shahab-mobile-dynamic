@@ -1,9 +1,10 @@
-const CACHE_NAME = 'shahab-mobile-cache-v1';
+const CACHE_NAME = 'shahab-mobile-cache-v2'; // Cache version ko update karein
 const urlsToCache = [
     '/',
     '/index.html',
     '/offers.html',
     '/installments.html',
+    '/manifest.json', // manifest.json ko cache mein shamil karein
     '/app.js',
     '/products.js',
     '/hero.js',
