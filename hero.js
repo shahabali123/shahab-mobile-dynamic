@@ -47,7 +47,7 @@ function renderHero() {
                 <div class="relative group">
                     <div class="absolute -top-20 -right-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-pulse"></div>
                     <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] animate-pulse"></div>
-                    <img src="${heroConfig.image}" alt="Shahab Mobile Featured" class="relative z-20 w-full max-w-lg h-auto rounded-[3rem] shadow-2xl transform hover:scale-105 transition duration-1000 border border-white/10">
+                    <img src="${heroConfig.image}" alt="Shahab Mobile Featured" class="relative z-20 w-full max-w-lg h-auto rounded-[3rem] shadow-2xl animate-float-3d border border-white/10">
                 </div>
             </div>
 

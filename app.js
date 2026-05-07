@@ -10,7 +10,8 @@ const itemsPerPage = 8;
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateCompareUI();
-    renderProducts(true, false);
+    initScrollReveal();
+    renderProducts(true, false); // Ab products render honge aur observe kiye jayenge
 
     // Close suggestions when clicking outside
     document.addEventListener('click', (e) => {
@@ -118,8 +119,15 @@ function renderProducts(resetPage = false, shouldScroll = false) {
     const start = (currentPage - 1) * itemsPerPage;
     const paginated = filtered.slice(start, start + itemsPerPage);
 
-    grid.innerHTML = paginated.map(product => `
-        <div class="product-card bg-white rounded-3xl p-5 border border-slate-100 group relative">
+    grid.innerHTML = paginated.map(product => {
+        // Check if we are on the installments page to change the primary button
+        const isInstallmentsPage = window.filterOnlyInstallments;
+        const mainBtnHtml = isInstallmentsPage 
+            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold text-[10px] hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-blue-400"></i> Inquire Plan</button>`
+            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>`;
+
+        return `
+        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
             <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
                 ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
@@ -136,15 +144,16 @@ function renderProducts(resetPage = false, shouldScroll = false) {
                 <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
             </div>
             <div class="flex gap-2 relative z-20">
-                <button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>
+                ${mainBtnHtml}
                 <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-blue-600 hover:text-blue-600'} transition">
                     <i class="fas fa-balance-scale"></i>
                 </button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     renderPagination(filtered.length);
+    observeElements();
 
     // Scroll to product grid if requested
     if (shouldScroll) {
@@ -326,6 +335,19 @@ function checkoutWhatsApp() {
     cart.forEach(item => text += `• ${item.name} x ${item.quantity} (Rs. ${(item.price * item.quantity).toLocaleString()})\n`);
     text += `\nTotal: Rs. ${document.getElementById('cart-total').innerText}`;
     window.open(`https://wa.me/923420475187?text=${encodeURIComponent(text)}`);
+}
+
+function inquireInstallment(id) {
+    const p = products.find(product => product.id === id);
+    if (!p) return;
+
+    const config = typeof installmentConfig !== 'undefined' ? installmentConfig : { advancePercentage: 20, plans: [] };
+    const downPayment = Math.round(p.price * (config.advancePercentage / 100));
+    const options = config.plans.map(pl => pl.months).join(', ') + " Months";
+    
+    const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nAdvance Payment (${config.advancePercentage}%): Rs. ${downPayment.toLocaleString()}\nPlan options: ${options}`;
+    
+    window.open(`https://wa.me/923420475187?text=${encodeURIComponent(msg)}`);
 }
 
 // Search Logic
@@ -524,6 +546,44 @@ document.addEventListener('touchend', e => {
 function closeDetails() {
     document.getElementById('product-modal').classList.add('hidden');
     document.body.style.overflow = 'auto';
+}
+
+// 3D Scroll Reveal Logic
+let revealObserver;
+function initScrollReveal() {
+    revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-active');
+            }
+        });
+    }, { threshold: 0.1 });
+}
+
+function observeElements() {
+    document.querySelectorAll('.reveal-item').forEach(el => revealObserver.observe(el));
+}
+
+// Interactive 3D Tilt Logic (Desktop Only)
+function handle3DTilt(e, card) {
+    if (window.innerWidth < 768) return; // Disable on mobile for performance
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+    card.style.zIndex = "50";
+}
+
+function reset3DTilt(card) {
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    card.style.zIndex = "1";
 }
 
 // Toast System
