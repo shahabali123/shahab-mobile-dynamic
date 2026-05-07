@@ -8,14 +8,14 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "favicon.jpg",
+      "src": "images/shahab-mobile-logo.png",
       "sizes": "192x192",
-      "type": "image/jpg"
+      "type": "image/png"
     },
     {
-      "src": "favicon.jpg",
+      "src": "images/shahab-mobile-logo.png",
       "sizes": "512x512",
-      "type": "image/jpg"
+      "type": "image/png"
     }
   ]
 }
