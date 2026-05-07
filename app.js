@@ -178,9 +178,8 @@ function toggleMobileMenu() {
     menu.classList.toggle('translate-x-full');
     overlay?.classList.toggle('hidden');
     
-    // Toggle body scroll
-    const isOpen = !isOpening;
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    // Fix: If opening, lock scroll. If closing, restore it.
+    document.body.style.overflow = isOpening ? 'hidden' : 'auto';
 }
 
 function resetFilters() {
@@ -477,8 +476,12 @@ function openLightbox() {
 
 function closeLightbox() {
     document.getElementById('lightbox-modal').classList.add('hidden');
-    if (document.getElementById('product-modal').classList.contains('hidden')) {
-        document.body.style.overflow = 'hidden'; // Keep background locked if details modal is still open
+    
+    // Fix: If product details modal is STILL open, keep the body scroll locked.
+    // Otherwise, restore scrolling.
+    const detailsModal = document.getElementById('product-modal');
+    if (detailsModal && !detailsModal.classList.contains('hidden')) {
+        document.body.style.overflow = 'hidden';
     } else {
         document.body.style.overflow = 'auto';
     }
