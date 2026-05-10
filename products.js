@@ -405,5 +405,18 @@ const products = [
         installmentText: "20% Advance, 9 Months Installments",
         freeDelivery: true,
         badge: { text: "+ POWERBANK", color: "bg-purple-600" }
+    },
+    {
+        id: 44,
+        name: "Infinix Hot 60 Pro+ (8GB-256GB)",
+        brand: "Infinix",
+        price: 66580,
+        description: "Experience flagship-level power with the Infinx Hot 60 Pro+.",
+        images: ["./images/infinix-hot-60-pro+.jpg"],
+        specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
+        stock: 8,
+        installment: true,
+        installmentText: "20% Advance, 9 Months Installments",
+        freeDelivery: true
     }
 ];
