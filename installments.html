@@ -318,12 +318,12 @@
     </div>
 
     <script src="products.js"></script>
-    <script src="manifest.json"></script>
-    <script src="app.js"></script>
     <script>
         // Custom filter for Installments Page
         window.filterOnlyInstallments = true;
-
+    </script>
+    <script src="app.js"></script>
+    <script>
         // Update banner text from config in products.js
         if (typeof installmentConfig !== 'undefined') {
             document.getElementById('inst-banner-desc').innerText = installmentConfig.bannerDescription;
