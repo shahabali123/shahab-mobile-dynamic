@@ -1,14 +1,15 @@
-const CACHE_NAME = 'shahab-mobile-cache-v2'; // Cache version ko update karein
+const CACHE_NAME = 'shahab-mobile-cache-v3'; // Cache version ko update karein
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/offers.html',
-    '/installments.html',
-    '/manifest.json', // manifest.json ko cache mein shamil karein
-    '/app.js',
-    '/products.js',
-    '/hero.js',
-    '/images/tecno-spark-go-3.webp', 
+    './',
+    './index.html',
+    './offers.html',
+    './installments.html',
+    './manifest.json',
+    './app.js',
+    './products.js',
+    './hero.js',
+    './images/tecno-spark-go-3.webp',
+    'https://cdn.tailwindcss.com'
     // Add other critical assets here (e.g., main CSS, common images)
 ];
 
