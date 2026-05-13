@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateCompareUI();
     initScrollReveal();
-    renderProducts(true, false); // Ab products render honge aur observe kiye jayenge
+    renderProducts(true, false); 
 
     // Close suggestions when clicking outside
     document.addEventListener('click', (e) => {
@@ -123,31 +123,33 @@ function renderProducts(resetPage = false, shouldScroll = false) {
         // Check if we are on the installments page to change the primary button
         const isInstallmentsPage = window.filterOnlyInstallments;
         const mainBtnHtml = isInstallmentsPage 
-            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold text-[10px] hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-blue-400"></i> Inquire Plan</button>`
-            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>`;
+            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-[#A8FF00] text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition shadow-lg flex items-center justify-center gap-2"><i class="fas fa-hand-holding-usd"></i> Inquire</button>`
+            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-neon-gradient text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition shadow-xl shadow-purple-500/20">Add to Cart</button>`;
 
         return `
-        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
-            <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
-                ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
-                ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
-                ${product.installmentText ? `<span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.installmentText}</span>` : ''}
+        <div class="product-card reveal-item rounded-[2.5rem] p-6 group relative perspective-1000" onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
+            <div class="absolute top-6 left-6 flex flex-col gap-2 z-10">
+                ${product.badge ? `<span class="${product.badge.color} text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-2xl">${product.badge.text}</span>` : ''}
+                ${product.freeDelivery ? '<span class="bg-[#00C6FF] text-black text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-2xl">Free Delivery</span>' : ''}
+                ${product.installment ? '<span class="bg-white text-black text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-2xl flex items-center gap-1"><i class="fas fa-bolt text-[8px]"></i> Installment</span>' : ''}
             </div>
             
-            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="showDetails(${product.id})">
-                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500">
+            <div class="aspect-square bg-white/5 rounded-[2rem] mb-6 flex items-center justify-center overflow-hidden cursor-pointer group-hover:bg-white/10 transition duration-500" onclick="showDetails(${product.id})">
+                <img src="${product.images[0]}" class="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform duration-700 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
             </div>
-            <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
-            <h3 class="font-bold text-slate-800 mb-2 truncate" title="${product.name}">${product.name}</h3>
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
-            </div>
-            <div class="flex gap-2 relative z-20">
-                ${mainBtnHtml}
-                <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-blue-600 hover:text-blue-600'} transition">
-                    <i class="fas fa-balance-scale"></i>
-                </button>
+            
+            <div class="px-2">
+                <p class="text-[#00C6FF] font-black text-[10px] tracking-[0.3em] uppercase mb-2">${product.brand}</p>
+                <h3 class="text-lg font-black text-white mb-3 truncate uppercase tracking-tight" title="${product.name}">${product.name}</h3>
+                <div class="flex justify-between items-center mb-6">
+                    <p class="text-2xl font-black text-white tracking-tighter">Rs. ${product.price.toLocaleString()}</p>
+                </div>
+                <div class="flex gap-3 relative z-20">
+                    ${mainBtnHtml}
+                    <button onclick="toggleCompare(${product.id})" class="w-14 h-14 flex items-center justify-center rounded-2xl border border-white/10 text-white/50 hover:border-neon-pink hover:text-neon-pink transition-all duration-300">
+                        <i class="fas fa-balance-scale"></i>
+                    </button>
+                </div>
             </div>
         </div>
     `}).join('');
@@ -240,14 +242,14 @@ function openCompareModal() {
     
     const content = document.getElementById('compare-content');
     const createSlot = (p) => `
-        <div class="bg-slate-50 p-3 md:p-6 rounded-2xl md:rounded-3xl border border-slate-100 flex flex-col items-center text-center">
+        <div class="bg-white/5 p-6 md:p-10 rounded-[2.5rem] border border-white/5 flex flex-col items-center text-center group">
             <img src="${p.images[0]}" class="w-20 h-20 md:w-32 md:h-32 object-contain mb-3 md:mb-4 rounded-xl">
-            <h4 class="font-bold text-xs md:text-lg mb-1 md:mb-2 text-slate-800 line-clamp-2 min-h-[2.5rem]">${p.name}</h4>
-            <p class="text-sm md:text-2xl font-black text-blue-600 mb-4 md:mb-6">Rs. ${p.price.toLocaleString()}</p>
-            <div class="w-full space-y-2 md:space-y-3">
-                <div class="bg-white p-2 md:p-3 rounded-lg md:rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-center md:items-start gap-1"><span class="text-slate-400 text-[8px] md:text-xs font-bold">RAM</span> <span class="font-bold text-[10px] md:text-sm">${p.specs.ram}</span></div>
-                <div class="bg-white p-2 md:p-3 rounded-lg md:rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-center md:items-start gap-1"><span class="text-slate-400 text-[8px] md:text-xs font-bold">STORAGE</span> <span class="font-bold text-[10px] md:text-sm">${p.specs.storage}</span></div>
-                <div class="bg-white p-2 md:p-3 rounded-lg md:rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-center md:items-start gap-1"><span class="text-slate-400 text-[8px] md:text-xs font-bold">BATTERY</span> <span class="font-bold text-[10px] md:text-sm">${p.specs.battery}</span></div>
+            <h4 class="font-black text-xs md:text-xl mb-2 text-white uppercase tracking-tighter line-clamp-2 min-h-[3rem]">${p.name}</h4>
+            <p class="text-sm md:text-3xl font-black text-neon-blue mb-8">Rs. ${p.price.toLocaleString()}</p>
+            <div class="w-full space-y-3">
+                <div class="bg-[#0F0F14] p-4 rounded-2xl border border-white/5 flex justify-between items-center"><span class="text-white/20 text-[9px] font-black uppercase">RAM</span> <span class="font-bold text-sm text-white">${p.specs.ram}</span></div>
+                <div class="bg-[#0F0F14] p-4 rounded-2xl border border-white/5 flex justify-between items-center"><span class="text-white/20 text-[9px] font-black uppercase">STORAGE</span> <span class="font-bold text-sm text-white">${p.specs.storage}</span></div>
+                <div class="bg-[#0F0F14] p-4 rounded-2xl border border-white/5 flex justify-between items-center"><span class="text-white/20 text-[9px] font-black uppercase">BATTERY</span> <span class="font-bold text-sm text-white">${p.specs.battery}</span></div>
             </div>
         </div>
     `;
@@ -302,15 +304,15 @@ function renderCart() {
     itemsContainer.innerHTML = cart.map(item => {
         total += item.price * item.quantity;
         return `
-            <div class="flex gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <img src="${item.images[0]}" class="w-16 h-16 object-contain">
+            <div class="flex gap-6 bg-white/5 p-5 rounded-3xl border border-white/5">
+                <img src="${item.images[0]}" class="w-20 h-20 object-contain rounded-2xl bg-white/5 p-2">
                 <div class="flex-grow">
-                    <h4 class="font-bold text-sm">${item.name}</h4>
-                    <p class="text-blue-600 font-bold text-sm">Rs. ${item.price.toLocaleString()}</p>
-                    <div class="flex items-center gap-3 mt-2">
-                        <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 rounded-full bg-slate-100">-</button>
-                        <span class="font-bold">${item.quantity}</span>
-                        <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 rounded-full bg-slate-100">+</button>
+                    <h4 class="font-black text-white uppercase text-sm mb-1">${item.name}</h4>
+                    <p class="text-neon-blue font-black text-sm mb-3">Rs. ${item.price.toLocaleString()}</p>
+                    <div class="flex items-center gap-4">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-white transition flex items-center justify-center">-</button>
+                        <span class="font-black text-white text-lg">${item.quantity}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-white transition flex items-center justify-center">+</button>
                     </div>
                 </div>
             </div>
@@ -367,11 +369,11 @@ function handleSearch(e) {
 
     if (matched.length > 0) {
         suggestions.innerHTML = matched.map(p => `
-            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-50 last:border-0" onclick="showDetails(${p.id})">
-                <img src="${p.images[0]}" class="w-12 h-12 object-contain rounded-lg">
+            <div class="flex items-center gap-4 p-5 hover:bg-white/5 cursor-pointer transition border-b border-white/5 last:border-0" onclick="showDetails(${p.id})">
+                <img src="${p.images[0]}" class="w-14 h-14 object-contain rounded-xl bg-white/5 p-1">
                 <div>
-                    <p class="font-bold text-slate-800 text-sm">${p.name}</p>
-                    <p class="text-blue-600 font-bold text-xs">Rs. ${p.price.toLocaleString()}</p>
+                    <p class="font-black text-white uppercase text-sm">${p.name}</p>
+                    <p class="text-neon-blue font-black text-xs uppercase">Rs. ${p.price.toLocaleString()}</p>
                 </div>
             </div>
         `).join('');
@@ -395,23 +397,23 @@ function showDetails(id) {
     document.getElementById('modal-desc').innerText = p.description;
     
     const brandBadge = document.getElementById('modal-brand-badge');
-    brandBadge.innerHTML = `<span class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">${p.brand}</span>`;
+    brandBadge.innerHTML = `<span class="bg-[#00C6FF]/20 text-[#00C6FF] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">${p.brand}</span>`;
 
     const mainImg = document.getElementById('modal-main-image');
-    mainImg.innerHTML = `<img src="${p.images[0]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()">`;
+    mainImg.innerHTML = `<img src="${p.images[0]}" class="w-[85%] h-[85%] object-contain cursor-zoom-in group-hover:scale-105 transition-transform duration-700" onclick="openLightbox()">`;
 
     const thumbnails = document.getElementById('modal-thumbnails');
     thumbnails.innerHTML = p.images.map((img, idx) => `
-        <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl border border-slate-100 flex-shrink-0 cursor-pointer overflow-hidden p-2 bg-white hover:border-blue-600 transition" onclick="updateMainImage(${idx})">
+        <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl border border-white/5 flex-shrink-0 cursor-pointer overflow-hidden p-3 bg-white/5 hover:border-neon-blue hover:bg-white/10 transition" onclick="updateMainImage(${idx})">
             <img src="${img}" class="w-full h-full object-contain">
         </div>
     `).join('');
 
     const specs = document.getElementById('modal-specs');
     specs.innerHTML = `
-        <div class="bg-slate-50 p-3 rounded-xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">RAM</p><p class="text-sm font-bold text-slate-700">${p.specs.ram}</p></div>
-        <div class="bg-slate-50 p-3 rounded-xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Storage</p><p class="text-sm font-bold text-slate-700">${p.specs.storage}</p></div>
-        <div class="bg-slate-50 p-3 rounded-xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Battery</p><p class="text-sm font-bold text-slate-700">${p.specs.battery}</p></div>
+        <div class="bg-white/5 p-4 rounded-2xl text-center border border-white/5"><p class="text-[9px] text-white/20 font-black uppercase mb-1">RAM</p><p class="text-base font-black text-white">${p.specs.ram}</p></div>
+        <div class="bg-white/5 p-4 rounded-2xl text-center border border-white/5"><p class="text-[9px] text-white/20 font-black uppercase mb-1">Storage</p><p class="text-base font-black text-white">${p.specs.storage}</p></div>
+        <div class="bg-white/5 p-4 rounded-2xl text-center border border-white/5"><p class="text-[9px] text-white/20 font-black uppercase mb-1">Battery</p><p class="text-base font-black text-white">${p.specs.battery}</p></div>
     `;
 
     // Action Buttons
@@ -443,20 +445,20 @@ function showDetails(id) {
         if (p.installmentText) {
             const installmentTextEl = document.createElement('p');
             installmentTextEl.id = 'modal-installment-text';
-            installmentTextEl.className = "text-blue-600 font-bold text-sm mb-4";
+            installmentTextEl.className = "text-[#A8FF00] font-black uppercase tracking-widest text-xs mb-6";
             installmentTextEl.innerText = p.installmentText;
             modalActions.insertBefore(installmentTextEl, addBtn);
         }
 
         const calcBox = document.createElement('div');
         calcBox.id = 'modal-calc-box';
-        calcBox.className = "mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-4";
+        calcBox.className = "mt-8 bg-white/5 p-6 rounded-3xl border border-white/5 mb-8";
         calcBox.innerHTML = `
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Installment Estimate (${config.advancePercentage}% Advance)</p>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">Advance</p><p class="text-[10px] font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
+            <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-4">Payment Estimate (${config.advancePercentage}% Advance)</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-[#0F0F14] p-3 rounded-xl text-center border border-white/5"><p class="text-[8px] text-white/20 font-black mb-1 uppercase">Advance</p><p class="text-xs font-black text-white">Rs. ${downPayment.toLocaleString()}</p></div>
                 ${planResults.map(plan => `
-                    <div class="bg-white p-2 rounded-lg text-center shadow-sm border border-slate-100"><p class="text-[9px] text-slate-400 font-bold mb-1">${plan.months} Months</p><p class="text-[10px] font-bold text-blue-600">Rs. ${plan.perMonth.toLocaleString()}/mo</p></div>
+                    <div class="bg-[#0F0F14] p-3 rounded-xl text-center border border-white/5"><p class="text-[8px] text-white/20 font-black mb-1 uppercase">${plan.months} Mo</p><p class="text-xs font-black text-neon-blue">Rs. ${plan.perMonth.toLocaleString()}</p></div>
                 `).join('')}
             </div>
         `;
@@ -464,8 +466,8 @@ function showDetails(id) {
 
         const instBtn = document.createElement('button');
         instBtn.id = 'modal-installment-btn';
-        instBtn.className = "w-full mt-3 bg-slate-100 text-slate-900 py-4 rounded-2xl font-bold hover:bg-slate-200 transition flex items-center justify-center gap-2 border border-slate-200";
-        instBtn.innerHTML = `<i class="fas fa-hand-holding-usd text-blue-600"></i> Inquire Installment Plan`;
+        instBtn.className = "w-full mt-4 bg-white/5 text-white/70 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition flex items-center justify-center gap-3 border border-white/5";
+        instBtn.innerHTML = `<i class="fas fa-hand-holding-usd text-[#A8FF00]"></i> Inquire Flexi Plan`;
         instBtn.onclick = () => {
             const options = config.plans.map(pl => pl.months).join(', ') + " Months";
             const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nAdvance Payment (${config.advancePercentage}%): Rs. ${downPayment.toLocaleString()}\nPlan options: ${options}`;
@@ -578,7 +580,7 @@ function handle3DTilt(e, card) {
     const rotateY = (centerX - x) / 10;
     
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-    card.style.zIndex = "50";
+    card.style.boxShadow = `0 40px 80px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(123, 44, 255, 0.3)`;
 }
 
 function reset3DTilt(card) {
@@ -624,7 +626,7 @@ function renderPagination(totalItems) {
 
     let html = '';
     for (let i = 1; i <= totalPages; i++) {
-        html += `<button onclick="currentPage=${i}; renderProducts(false, true);" class="w-10 h-10 rounded-xl font-bold transition ${currentPage === i ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-500 hover:border-blue-600 focus:border-blue-600'}">${i}</button>`;
+        html += `<button onclick="currentPage=${i}; renderProducts(false, true);" class="w-14 h-14 rounded-2xl font-black uppercase transition ${currentPage === i ? 'bg-neon-gradient text-white shadow-xl shadow-purple-500/20' : 'bg-white/5 border border-white/5 text-white/30 hover:text-white hover:border-white/20'}">${i}</button>`;
     }
     container.innerHTML = html;
 }

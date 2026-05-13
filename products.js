@@ -8,11 +8,11 @@
  * badge: { text: "APNA_TEXT", color: "bg-COLOR_NAME" }
  * 
  * Mash'hoor Colors:
- * - Neela (Blue):  bg-blue-600
- * - Surkh (Red):   bg-red-500
- * - Narangi (Hot): bg-orange-500
- * - Sabz (Green):  bg-emerald-500
- * - Jamni (Purple):bg-purple-600
+ * - Neela (Neon Blue):  bg-[#00C6FF]
+ * - Surkh (Neon Pink):  bg-[#FF00A8]
+ * - Narangi (Hot):      bg-[#FF8A00]
+ * - Sabz (Lime):        bg-[#A8FF00]
+ * - Jamni (Purple):     bg-[#7B2CFF]
  * 
  * Agar badge nahi dikhana, to us product se 'badge' wali line hata dein.
  * 
