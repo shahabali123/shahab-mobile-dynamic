@@ -68,54 +68,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
-        .product-card { background: #ffffff; transition: all 0.2s ease; border: 1px solid #f1f5f9; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0F0F14; color: #ffffff; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .product-card { background: #151521; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); border: 1px solid rgba(255,255,255,0.05); }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); border-color: rgba(0, 198, 255, 0.3); }
+        .bg-neon-gradient { background: linear-gradient(135deg, #00C6FF, #7B2CFF, #FF00A8); }
+        .text-neon-blue { color: #00C6FF; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        .reveal-item { opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .reveal-item { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
         .reveal-active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
-    <nav class="glass sticky top-0 z-50 py-2.5">
+<body class="bg-[#0F0F14] text-white overflow-x-hidden">
+    <nav class="glass sticky top-0 z-50 py-2 sm:py-3">
         <div class="container mx-auto px-4 md:px-8">
-            <div class="flex flex-wrap lg:flex-nowrap justify-between items-center gap-y-3">
-                <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
-                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-10 h-10 sm:w-12 sm:h-12 object-contain">
-                    <h1 class="text-lg md:text-2xl font-black tracking-tighter text-slate-900 uppercase">SHAHAB<span class="text-indigo-600">MOBILE</span></h1>
+            <div class="flex justify-between items-center gap-2 sm:gap-4">
+                <div class="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
+                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-8 h-8 sm:w-12 sm:h-12 object-contain filter brightness-110">
+                    <h1 class="text-sm sm:text-2xl font-black tracking-tighter text-white uppercase">SHAHAB<span class="text-transparent bg-clip-text bg-neon-gradient">MOBILE</span></h1>
                 </div>
 
-                <!-- Navbar Search (Responsive) -->
-                <div class="relative w-full lg:max-w-md mx-0 lg:mx-4 group order-3 lg:order-none">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchBar" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" onfocus="handleSearch(event)" placeholder="Search devices..." class="w-full bg-slate-100 border border-slate-200 pl-11 pr-20 py-2.5 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm" autocomplete="off">
-                    <button onclick="renderProducts(true, true); document.getElementById('search-suggestions')?.classList.add('hidden')" class="absolute right-2 top-1/2 -translate-y-1/2 bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-indigo-700 transition">Search</button>
-                    <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar"></div>
+                <!-- Navbar Search (Compact for mobile) -->
+                <div class="relative flex-grow max-w-[140px] sm:max-w-md group">
+                    <i class="fas fa-search absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/30 text-[10px] sm:text-base"></i>
+                    <input type="text" id="searchBar" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" placeholder="Search..." class="w-full bg-white/5 border border-white/10 pl-7 sm:pl-11 pr-2 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-[10px] sm:text-sm text-white placeholder:text-white/20" autocomplete="off">
+                    <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-[#050505] rounded-xl shadow-2xl border border-white/10 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
                 </div>
 
-                <div class="flex gap-2 md:gap-4 items-center shrink-0">
-                    <div class="hidden md:flex gap-6 mr-4 font-bold text-slate-600 text-sm">
-                        <a href="index.html" class="hover:text-indigo-600 transition text-indigo-600">Home</a>
-                        <a href="offers.html" class="hover:text-indigo-600 transition">Offers</a>
-                        <a href="installments.html" class="hover:text-indigo-600 transition">Installments</a>
-                    </div>
-                    
-                    <!-- Mobile Filter Toggle -->
-                    <button onclick="toggleFilters()" class="p-2 hover:bg-slate-100 rounded-xl transition text-slate-700 flex items-center gap-2">
-                        <i class="fas fa-filter text-lg"></i>
-                        <span class="hidden lg:inline text-xs font-bold uppercase tracking-widest">Filters</span>
+                <div class="flex gap-1 sm:gap-4 items-center shrink-0">
+                    <button onclick="toggleFilters()" class="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition text-white/70">
+                        <i class="fas fa-sliders-h text-sm sm:text-xl"></i>
                     </button>
-                    
-                    <button onclick="toggleCart()" class="relative p-2 hover:bg-slate-100 rounded-xl transition group">
-                        <i class="fas fa-shopping-bag text-xl text-slate-700"></i>
-                        <span id="cart-count" class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">0</span>
+                    <button onclick="toggleCart()" class="relative p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition group">
+                        <i class="fas fa-shopping-bag text-sm sm:text-xl text-white/70"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-neon-gradient text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-[#0F0F14]">0</span>
                     </button>
-
-                    <!-- Mobile Menu Button -->
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 hover:bg-slate-100 rounded-xl transition text-slate-700">
+                    <button onclick="toggleMobileMenu()" class="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition text-white/70">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -125,24 +114,24 @@
             <div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
 
             <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="fixed top-0 right-0 h-full w-[280px] bg-white z-[100] translate-x-full transition-transform duration-300 md:hidden flex flex-col shadow-2xl border-l border-slate-100">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                    <h2 class="text-xl font-black text-slate-900">MENU</h2>
-                    <button onclick="toggleMobileMenu()" class="text-3xl font-light text-slate-400">&times;</button>
+            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-[#050505] z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/10 backdrop-blur-xl">
+                <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+                    <h2 class="text-xl font-black uppercase tracking-widest text-white">Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white/50">&times;</button>
                 </div>
-                <div class="flex flex-col p-6 gap-6 text-base font-bold text-slate-600">
-                    <a href="index.html" class="flex items-center gap-4 text-indigo-600"><i class="fas fa-home w-6"></i> Home</a>
-                    <a href="offers.html" class="flex items-center gap-4"><i class="fas fa-tags w-6"></i> Offers</a>
-                    <a href="installments.html" class="flex items-center gap-4"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
-                    <div class="h-[1px] bg-slate-100 my-2"></div>
-                    <a href="#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4"><i class="fas fa-th-large w-6"></i> Collection</a>
+                <div class="flex flex-col p-8 gap-6 text-base font-bold text-white">
+                    <a href="index.html" class="flex items-center gap-4 text-neon-blue p-4 bg-white/10 rounded-2xl"><i class="fas fa-home w-6"></i> Home</a>
+                    <a href="offers.html" class="flex items-center gap-4 hover:text-neon-pink transition p-4"><i class="fas fa-tags w-6"></i> Offers</a>
+                    <a href="installments.html" class="flex items-center gap-4 hover:text-neon-lime transition p-4"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
+                    <div class="h-[1px] bg-white/5 my-2"></div>
+                    <a href="index.html#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4 hover:text-neon-blue transition p-4"><i class="fas fa-th-large w-6"></i> Collection</a>
                 </div>
             </div>
 
             <!-- Filters Dropdown -->
-            <div id="filters-dropdown" class="hidden mt-4 pb-6 space-y-6 border-t border-slate-100 pt-6">
+            <div id="filters-dropdown" class="hidden mt-6 pb-6 space-y-6 border-t border-white/5 pt-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <select id="brandFilter" onchange="renderProducts(true, true)" class="bg-slate-100 border border-slate-200 p-3 rounded-xl outline-none font-bold text-slate-600">
+                    <select id="brandFilter" onchange="renderProducts(true, true)" class="bg-[#050505] border border-white/10 p-4 rounded-2xl outline-none font-bold text-white cursor-pointer">
                         <option value="All">All Brands</option>
                         <option value="Samsung">Samsung</option>
                         <option value="Redmi">Redmi</option>
@@ -151,26 +140,26 @@
                         <option value="Itel">Itel</option>
                         <option value="Infinix">Infinix</option>
                     </select>
-                    <select id="sortFilter" onchange="renderProducts(true, true)" class="bg-slate-100 border border-slate-200 p-3 rounded-xl outline-none font-bold text-slate-600">
+                    <select id="sortFilter" onchange="renderProducts(true, true)" class="bg-[#050505] border border-white/10 p-4 rounded-2xl outline-none font-bold text-white cursor-pointer">
                         <option value="default">Default Sorting</option>
                         <option value="low">Price: Low to High</option>
                         <option value="high">Price: High to Low</option>
                     </select>
-                    <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 p-3 rounded-xl">
-                        <input type="number" id="minPrice" oninput="renderProducts(true, true)" placeholder="Min Rs." class="bg-transparent border-none w-full focus:ring-0 outline-none text-sm font-bold">
-                        <span class="text-slate-300">|</span>
-                        <input type="number" id="maxPrice" oninput="renderProducts(true, true)" placeholder="Max Rs." class="bg-transparent border-none w-full focus:ring-0 outline-none text-sm font-bold">
+                    <div class="flex items-center gap-2 bg-white/5 border border-white/10 p-4 rounded-2xl">
+                        <input type="number" id="minPrice" oninput="renderProducts(true, true)" placeholder="Min Rs." class="bg-transparent border-none w-full focus:ring-0 outline-none text-sm font-bold text-white">
+                        <span class="text-white/10">|</span>
+                        <input type="number" id="maxPrice" oninput="renderProducts(true, true)" placeholder="Max Rs." class="bg-transparent border-none w-full focus:ring-0 outline-none text-sm font-bold text-white">
                     </div>
-                    <label class="flex items-center gap-3 cursor-pointer bg-slate-100 border border-slate-200 px-4 py-3 rounded-xl" onchange="renderProducts(true, true)">
-                        <input type="checkbox" id="installmentFilter" class="w-5 h-5 text-indigo-600 rounded-lg">
-                        <span class="text-sm font-bold text-slate-600">Installments Only</span>
+                    <label class="flex items-center gap-3 cursor-pointer bg-white/5 border border-white/10 px-6 py-4 rounded-2xl group transition" onchange="renderProducts(true, true)">
+                        <input type="checkbox" id="installmentFilter" class="w-5 h-5 text-purple-600 rounded-lg bg-white/5 border-white/10 focus:ring-purple-500">
+                        <span class="text-sm font-black uppercase tracking-widest text-white group-hover:text-white transition">Installments Only</span>
                     </label>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="renderProducts(true, true); toggleFilters();" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition">
-                        Apply Filters
+                    <button onclick="renderProducts(true, true); toggleFilters();" class="flex-grow bg-neon-gradient text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:brightness-110 transition shadow-xl shadow-purple-500/20">
+                        Apply Filter Settings
                     </button>
-                    <button onclick="resetFilters(); toggleFilters();" class="flex-grow bg-slate-100 border border-slate-200 text-slate-600 py-3 rounded-xl font-bold">
+                    <button onclick="resetFilters(); toggleFilters();" class="flex-grow bg-white/5 border border-white/10 text-white/50 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition">
                         Clear All
                     </button>
                 </div>
@@ -179,73 +168,79 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="container mx-auto px-6 pt-8 md:pt-12 pb-8" id="hero-container">
-        <!-- Injected via hero.js -->
+    <header class="container mx-auto px-6 pt-16 pb-12" id="hero-container">
+        <!-- Content Injected via hero.js -->
     </header>
 
     <!-- Product Grid -->
-    <main class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6" id="product-grid">
-        <!-- Injected via app.js -->
+    <main class="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="product-grid">
+        <!-- Products will be injected here via JS -->
     </main>
 
     <!-- Pagination -->
     <div id="pagination-controls" class="container mx-auto px-6 py-12 flex justify-center items-center gap-4"></div>
 
     <!-- Floating Compare Button -->
-    <div id="floating-compare-btn" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[90] flex items-center hidden">
-        <button onclick="openCompareModal()" class="bg-slate-900 text-white px-6 py-4 rounded-l-full shadow-2xl flex items-center gap-3 hover:bg-indigo-600 transition-all duration-300 border-r border-slate-700">
+    <div id="floating-compare-btn" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[90] flex items-center hidden filter drop-shadow-[0_0_20px_rgba(123,44,255,0.4)]">
+        <button onclick="openCompareModal()" class="bg-[#151521] text-white px-8 py-5 rounded-l-3xl border border-white/10 shadow-2xl flex items-center gap-3 hover:bg-[#1A1A24] transition-all duration-300 border-r-0">
             <i class="fas fa-balance-scale"></i>
-            <span class="font-bold">Compare (<span id="compare-count">0</span>)</span>
+            <span class="font-black uppercase tracking-widest text-xs">Compare (<span id="compare-count" class="text-neon-blue">0</span>)</span>
         </button>
-        <button onclick="clearCompareList()" class="bg-red-500 text-white px-4 py-4 rounded-r-full shadow-2xl hover:bg-red-600 transition-all duration-300" title="Clear List">
+        <button onclick="clearCompareList()" class="bg-[#151521] text-white/50 px-6 py-5 rounded-r-3xl border border-white/10 border-l-0 shadow-2xl hover:text-red-500 transition-all duration-300" title="Clear List">
             <i class="fas fa-times"></i>
         </button>
     </div>
 
-    <!-- Compare Modal -->
-    <div id="compare-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[80] hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-slate-100">
-            <button onclick="closeCompareModal()" class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">&times;</button>
-            <div class="p-4 sm:p-8">
-                <h2 class="text-lg sm:text-2xl font-black text-slate-900 mb-6 text-center uppercase tracking-tight">Comparison</h2>
-                <div class="grid grid-cols-2 gap-2 sm:gap-4" id="compare-content"></div>
+    <!-- Comparison Modal -->
+    <div id="compare-modal" class="fixed inset-0 bg-[#0F0F14]/90 backdrop-blur-xl z-[80] hidden flex items-center justify-center p-4">
+        <div class="bg-[#050505] rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-white/10">
+            <button onclick="closeCompareModal()" class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
+            <div class="p-8 md:p-16">
+                <h2 class="text-2xl md:text-4xl font-black text-white mb-10 text-center uppercase tracking-tighter">Side-by-Side <span class="text-neon-blue">Comparison</span></h2>
+                <div class="grid grid-cols-2 gap-2 md:gap-8" id="compare-content"></div>
             </div>
         </div>
     </div>
 
     <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-white shadow-2xl translate-x-full transition-transform duration-500 z-[60] flex flex-col">
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-            <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fas fa-shopping-bag text-indigo-600"></i> Shopping Cart</h2>
-            <button onclick="toggleCart()" class="text-2xl">&times;</button>
+    <div id="cart-sidebar" class="fixed right-0 top-0 h-full w-full md:w-[450px] bg-[#050505] shadow-2xl translate-x-full transition-transform duration-500 z-[60] flex flex-col border-l border-white/10 backdrop-blur-xl">
+        <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+            <h2 class="text-2xl font-black uppercase tracking-widest text-white flex items-center gap-4"><i class="fas fa-shopping-bag text-neon-pink"></i> Cart</h2>
+            <button onclick="toggleCart()" class="text-3xl text-white/50">&times;</button>
         </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar"></div>
-        <div class="p-6 border-t border-slate-100 bg-slate-50">
-            <div class="flex justify-between items-center mb-6 text-2xl font-bold">Total: Rs. <span id="cart-total">0</span></div>
-            <button onclick="checkoutWhatsApp()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-3">
-                <i class="fab fa-whatsapp text-xl text-green-400"></i> Confirm via WhatsApp
+        <div id="cart-items" class="flex-grow overflow-y-auto p-8 space-y-6 custom-scrollbar"></div>
+        <div class="p-8 border-t border-white/5 bg-white/5">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-white/50 font-bold uppercase tracking-widest text-xs">Order Total</span>
+                <span class="text-3xl font-black text-white">Rs. <span id="cart-total">0</span></span>
+            </div>
+            <button onclick="checkoutWhatsApp()" class="w-full bg-neon-gradient text-white py-5 rounded-3xl font-black uppercase tracking-widest hover:brightness-110 transition shadow-2xl shadow-purple-500/30 flex items-center justify-center gap-3">
+                <i class="fab fa-whatsapp text-xl"></i> Secure Checkout
             </button>
         </div>
     </div>
 
-    <!-- Product Details Modal -->
-    <div id="product-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-white rounded-2xl sm:rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-slate-100">
-            <button onclick="closeDetails()" class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500">&times;</button>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-                <div class="bg-slate-50 p-8 flex flex-col gap-4">
-                    <div id="modal-main-image" class="aspect-square rounded-3xl overflow-hidden bg-white border border-slate-100 shadow-inner flex items-center justify-center"></div>
-                    <div id="modal-thumbnails" class="flex gap-3 overflow-x-auto pb-2 px-1"></div>
+    <!-- Product Details Modal (Single Product View) -->
+    <div id="product-modal" class="fixed inset-0 bg-[#0F0F14]/95 backdrop-blur-xl z-[70] hidden flex items-center justify-center p-4">
+        <div class="bg-[#151521] rounded-[3.5rem] max-w-6xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl animate-in zoom-in duration-300 border border-white/10">
+            <button onclick="closeDetails()" class="absolute top-8 right-8 z-20 w-14 h-14 flex items-center justify-center rounded-2xl bg-white/5 text-white/50 hover:text-white hover:bg-white/10 transition">&times;</button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[600px]">
+                <div class="bg-white/5 p-12 flex flex-col gap-8 relative overflow-hidden">
+                    <div id="modal-main-image" class="aspect-square rounded-[3rem] overflow-hidden bg-[#1A1A24] border border-white/5 shadow-2xl flex items-center justify-center group relative z-10">
+                        <!-- Image injected here -->
+                    </div>
+                    <div id="modal-thumbnails" class="flex gap-4 overflow-x-auto pb-4 px-1 custom-scrollbar relative z-10"></div>
+                    <div class="absolute inset-0 bg-neon-gradient opacity-[0.03] blur-[150px]"></div>
                 </div>
-                <div class="p-8 md:p-12 flex flex-col justify-center">
-                    <div id="modal-brand-badge" class="mb-4 inline-block"></div>
-                    <h2 id="modal-title" class="text-2xl md:text-4xl font-black mb-3 text-slate-900 leading-tight uppercase"></h2>
-                    <p id="modal-price" class="text-2xl md:text-3xl font-bold text-indigo-600 mb-6"></p>
-                    <div class="space-y-5">
-                        <div id="modal-specs" class="grid grid-cols-3 gap-3"></div>
-                        <p id="modal-desc" class="text-slate-600 leading-relaxed text-sm md:text-base"></p>
-                        <button id="modal-add-btn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-                            <i class="fas fa-cart-plus"></i> Add to Cart
+                <div class="p-12 md:p-20 flex flex-col justify-center bg-transparent">
+                    <div id="modal-brand-badge" class="mb-6"></div>
+                    <h2 id="modal-title" class="text-4xl md:text-6xl font-black mb-6 text-white leading-[1.1] tracking-tighter uppercase"></h2>
+                    <p id="modal-price" class="text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-10"></p>
+                    <div class="space-y-10">
+                        <div id="modal-specs" class="grid grid-cols-3 gap-4"></div>
+                        <p id="modal-desc" class="text-white/50 leading-relaxed text-lg font-medium"></p>
+                        <button id="modal-add-btn" class="w-full bg-neon-gradient text-white py-6 rounded-3xl font-black uppercase tracking-widest hover:scale-[1.02] transition shadow-2xl shadow-purple-500/40 flex items-center justify-center gap-4">
+                            <i class="fas fa-cart-plus text-xl"></i> Instant Buy Now
                         </button>
                     </div>
                 </div>
@@ -253,13 +248,13 @@
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 glass border border-slate-200 text-slate-900 px-6 py-4 rounded-2xl shadow-2xl hidden z-[100] font-medium flex flex-col md:flex-row items-center gap-4 animate-in slide-in-from-bottom duration-300">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 glass border border-white/10 text-white px-8 py-5 rounded-3xl shadow-2xl hidden z-[100] font-bold flex flex-col md:flex-row items-center gap-6 animate-in slide-in-from-bottom duration-300">
         <div class="flex items-center gap-3">
-            <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+            <i class="fas fa-check-circle text-neon-blue text-3xl"></i>
             <span id="toast-msg"></span>
         </div>
-        <button id="toast-action" class="text-indigo-600 font-bold hover:underline whitespace-nowrap"></button>
+        <button id="toast-action" class="text-neon-pink font-black uppercase tracking-widest text-xs hover:underline whitespace-nowrap"></button>
     </div>
 
     <!-- Fullscreen Lightbox Modal -->
@@ -274,43 +269,44 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-white pt-16 pb-8 mt-16 border-t border-slate-800">
+    <footer class="bg-[#0F0F14] text-white pt-24 pb-12 mt-24 border-t border-white/5 relative overflow-hidden">
+        <div class="blob bg-purple-900 opacity-[0.05] bottom-[-200px] left-[-200px] w-[600px] h-[600px]"></div>
         <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
             <div class="col-span-1 md:col-span-1">
                 <div class="flex items-center gap-4 mb-8">
-                    <img src="./images/logo.png" alt="Logo" class="w-10 h-10 object-contain">
-                    <h2 class="text-xl font-black uppercase tracking-tighter">SHAHAB<span class="text-indigo-400">MOBILE</span></h2>
+                    <img src="./images/logo.png" alt="Logo" class="w-12 h-12 object-contain filter brightness-125">
+                    <h2 class="text-2xl font-black uppercase tracking-tighter">SHAHAB<span class="text-neon-blue">MOBILE</span></h2>
                 </div>
-                <p class="text-slate-400 leading-relaxed mb-8 text-sm">Elevating your digital lifestyle with premium devices and trusted service in Mansehra.</p>
+                <p class="text-white/40 leading-relaxed mb-10 font-medium">Elevating your digital lifestyle with premium devices and futuristic service in Mansehra.</p>
                 <div class="flex gap-6">
-                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-indigo-600 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/923420475187" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-emerald-600 transition"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-neon-gradient transition group"><i class="fab fa-facebook-f group-hover:scale-110 transition"></i></a>
+                    <a href="#" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-neon-gradient transition group"><i class="fab fa-instagram group-hover:scale-110 transition"></i></a>
+                    <a href="https://wa.me/923420475187" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center hover:bg-neon-gradient transition group"><i class="fab fa-whatsapp group-hover:scale-110 transition"></i></a>
                 </div>
             </div>
             <div class="md:pl-10">
-                <h3 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-8">Quick Nav</h3>
-                <ul class="space-y-4 text-slate-300 font-bold text-sm">
-                    <li><a href="index.html" class="hover:text-indigo-400 transition">Home</a></li>
-                    <li><a href="offers.html" class="hover:text-indigo-400 transition">Latest Offers</a></li>
-                    <li><a href="installments.html" class="hover:text-indigo-400 transition">Installments</a></li>
+                <h3 class="text-xs font-black uppercase tracking-[0.3em] text-white/20 mb-10">Quick Nav</h3>
+                <ul class="space-y-5 text-white/50 font-bold">
+                    <li><a href="index.html" class="hover:text-neon-blue transition">Discover Store</a></li>
+                    <li><a href="offers.html" class="hover:text-neon-pink transition">Hot Drop Offers</a></li>
+                    <li><a href="installments.html" class="hover:text-purple-400 transition">Smart Installments</a></li>
                     <li><a href="#product-grid" class="hover:text-white transition">Our Collection</a></li>
                 </ul>
             </div>
             <div>
-                <h3 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-8">Connect</h3>
-                <ul class="space-y-4 text-slate-300 font-bold text-sm">
+                <h3 class="text-xs font-black uppercase tracking-[0.3em] text-white/20 mb-10">Connect</h3>
+                <ul class="space-y-6 text-white/50 font-bold">
                     <li class="flex items-start gap-4">
-                        <i class="fas fa-map-marker-alt mt-1 text-indigo-400"></i>
+                        <i class="fas fa-map-marker-alt mt-1 text-neon-blue"></i>
                         <a href="https://www.google.com/maps?q=34.33185278263107,73.1975088998034" target="_blank" class="hover:text-white transition">Shinkiari Road, Mansehra</a>
                     </li>
-                    <li class="flex items-center gap-4"><i class="fas fa-phone text-indigo-400"></i> +92 342 0475187</li>
-                    <li class="flex items-center gap-4 text-xs truncate"><i class="fas fa-envelope text-indigo-400"></i> shahab.mughal.180@gmail.com</li>
+                    <li class="flex items-center gap-4"><i class="fas fa-phone text-neon-pink"></i> +92 342 0475187</li>
+                    <li class="flex items-center gap-4 text-xs truncate"><i class="fas fa-envelope text-purple-400"></i> shahab.mughal.180@gmail.com</li>
                 </ul>
             </div>
         </div>
-        <div class="container mx-auto px-6 border-t border-slate-800 mt-16 pt-8 text-center text-slate-500 text-xs">
-            <p>&copy; 2024 Shahab Mobile. All Rights Reserved.</p>
+        <div class="container mx-auto px-6 border-t border-white/5 mt-20 pt-10 text-center text-white/20 text-xs font-black uppercase tracking-widest">
+            <p>&copy; 2024 Shahab Mobile. Futuristic Retailing Experience.</p>
         </div>
     </footer>
 

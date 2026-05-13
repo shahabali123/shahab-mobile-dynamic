@@ -22,17 +22,17 @@ function renderHero() {
                 <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
                     <span class="text-indigo-400 text-xs font-bold uppercase tracking-widest">${heroConfig.badge}</span>
                 </div>
-                <h2 class="text-4xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
+                <h2 class="text-3xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
                     ${heroConfig.title}
                 </h2>
                 <p class="text-slate-300 text-base md:text-lg mb-10 max-w-xl leading-relaxed mx-auto md:mx-0">
                     ${heroConfig.description}
                 </p>
                 <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                    <a href="${heroConfig.primaryBtn.link}" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-500 transition shadow-lg duration-300 text-sm">
+                    <a href="${heroConfig.primaryBtn.link}" class="bg-neon-gradient text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-black uppercase tracking-widest hover:brightness-110 transition shadow-lg shadow-purple-500/20 duration-300 text-xs">
                         ${heroConfig.primaryBtn.text}
                     </a>
-                    <a href="${heroConfig.installmentBtn.link}" class="bg-emerald-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-emerald-500 transition shadow-lg duration-300 flex items-center gap-2 text-sm">
+                    <a href="${heroConfig.installmentBtn.link}" class="bg-white/5 border border-white/10 text-white px-6 py-3 md:px-8 md:py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition shadow-lg duration-300 flex items-center gap-2 text-xs">
                         <i class="fas fa-calendar-check"></i> ${heroConfig.installmentBtn.text}
                     </a>
                 </div>

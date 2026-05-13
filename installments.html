@@ -98,24 +98,24 @@
             <div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
 
             <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 w-[280px] bg-[#151521] z-[100] translate-x-[120%] transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/5 backdrop-blur-xl">
+            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-[#151521] z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/5 backdrop-blur-xl">
                 <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
                     <h2 class="text-xl font-black uppercase tracking-widest text-white">Menu</h2>
                     <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white/50">&times;</button>
                 </div>
-                <div class="flex flex-col p-8 gap-6 text-base font-bold text-white/50">
-                    <a href="index.html" class="flex items-center gap-4 hover:text-white transition p-4"><i class="fas fa-home w-6"></i> Home</a>
-                    <a href="offers.html" class="flex items-center gap-4 hover:text-white transition p-4"><i class="fas fa-tags w-6"></i> Offers</a>
-                    <a href="installments.html" class="flex items-center gap-4 text-neon-lime p-4 bg-white/5 rounded-2xl"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
+                <div class="flex flex-col p-8 gap-6 text-base font-bold text-white">
+                    <a href="index.html" class="flex items-center gap-4 hover:text-neon-blue transition p-4"><i class="fas fa-home w-6"></i> Home</a>
+                    <a href="offers.html" class="flex items-center gap-4 hover:text-neon-pink transition p-4"><i class="fas fa-tags w-6"></i> Offers</a>
+                    <a href="installments.html" class="flex items-center gap-4 text-neon-lime p-4 bg-white/10 rounded-2xl"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
                     <div class="h-[1px] bg-white/5 my-2"></div>
-                    <a href="index.html#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4 hover:text-white transition p-4"><i class="fas fa-th-large w-6"></i> Collection</a>
+                    <a href="index.html#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4 hover:text-neon-blue transition p-4"><i class="fas fa-th-large w-6"></i> Collection</a>
                 </div>
             </div>
 
             <!-- Filters Dropdown -->
             <div id="filters-dropdown" class="hidden mt-6 pb-6 space-y-6 border-t border-white/5 pt-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <select id="brandFilter" onchange="renderProducts(true, true)" class="bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-bold text-white/70 cursor-pointer">
+                    <select id="brandFilter" onchange="renderProducts(true, true)" class="bg-[#050505] border border-white/10 p-4 rounded-2xl outline-none font-bold text-white cursor-pointer">
                         <option value="All">All Brands</option>
                         <option value="Samsung">Samsung</option>
                         <option value="Redmi">Redmi</option>
@@ -124,7 +124,7 @@
                         <option value="Vgotel">Vgotel</option>
                         <option value="Itel">Itel</option>
                     </select>
-                    <select id="sortFilter" onchange="renderProducts(true, true)" class="bg-white/5 border border-white/10 p-4 rounded-2xl outline-none font-bold text-white/70 cursor-pointer">
+                    <select id="sortFilter" onchange="renderProducts(true, true)" class="bg-[#050505] border border-white/10 p-4 rounded-2xl outline-none font-bold text-white cursor-pointer">
                         <option value="default">Default Sorting</option>
                         <option value="low">Price: Low to High</option>
                         <option value="high">Price: High to Low</option>

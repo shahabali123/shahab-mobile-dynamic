@@ -54,7 +54,7 @@ function renderProducts(resetPage = false, shouldScroll = false) {
     let filtered = [...products];
     
     // Apply Navbar Search Filter
-    const searchInp = document.getElementById('searchBar') || document.getElementById('searchBarMobile');
+    const searchInp = document.getElementById('searchBar');
     const query = searchInp?.value.toLowerCase();
     if (query) {
         filtered = filtered.filter(p => 
@@ -127,7 +127,7 @@ function renderProducts(resetPage = false, shouldScroll = false) {
             : `<button onclick="addToCart(${product.id})" class="flex-grow bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">Add to Cart</button>`;
 
         return `
-        <div class="product-card reveal-item bg-white rounded-2xl p-4 border border-slate-100 group relative transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div class="product-card reveal-item bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 group relative transition-all duration-300 hover:shadow-md hover:-translate-y-1">
             <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">${product.badge.text}</span>` : ''}
                 ${product.freeDelivery ? '<span class="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">Free Delivery</span>' : ''}
@@ -139,13 +139,13 @@ function renderProducts(resetPage = false, shouldScroll = false) {
             </div>
             
             <p class="text-indigo-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
-            <h3 class="font-bold text-slate-800 mb-2 truncate" title="${product.name}">${product.name}</h3>
+            <h3 class="font-bold text-slate-800 mb-2 truncate text-sm" title="${product.name}">${product.name}</h3>
             <div class="flex justify-between items-center mb-4">
-                <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
+                <p class="text-lg font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
             </div>
             <div class="flex gap-2 relative z-20">
                 ${mainBtnHtml}
-                <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-indigo-600 hover:text-indigo-600'} transition">
+                <button onclick="toggleCompare(${product.id})" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-indigo-600 hover:text-indigo-600'} transition">
                     <i class="fas fa-balance-scale"></i>
                 </button>
             </div>
@@ -240,14 +240,14 @@ function openCompareModal() {
     
     const content = document.getElementById('compare-content');
     const createSlot = (p) => `
-        <div class="bg-slate-50 p-2 sm:p-4 rounded-xl border border-slate-100 flex flex-col items-center text-center w-full">
-            <img src="${p.images[0]}" class="w-16 h-16 sm:w-20 sm:h-20 object-contain mb-2 rounded-lg">
-            <h4 class="font-bold text-[10px] sm:text-sm mb-1 text-slate-800 line-clamp-2 min-h-[1.5rem] sm:min-h-[2.5rem]">${p.name}</h4>
-            <p class="text-[11px] sm:text-lg font-black text-indigo-600 mb-2 sm:mb-4">Rs. ${p.price.toLocaleString()}</p>
+        <div class="bg-white/10 p-2 sm:p-4 rounded-xl border border-white/10 flex flex-col items-center text-center w-full max-w-full">
+            <img src="${p.images[0]}" class="w-12 h-12 sm:w-20 sm:h-20 object-contain mb-2 rounded-lg">
+            <h4 class="font-bold text-[10px] sm:text-sm mb-1 text-white line-clamp-1">${p.name}</h4>
+            <p class="text-[10px] sm:text-lg font-black text-blue-400 mb-2 sm:mb-4">Rs. ${p.price.toLocaleString()}</p>
             <div class="w-full space-y-2">
-                <div class="bg-white p-1.5 rounded-lg shadow-sm flex justify-between items-center"><span class="text-slate-400 text-[7px] sm:text-[8px] font-bold uppercase">RAM</span> <span class="font-bold text-[9px] sm:text-xs text-slate-800">${p.specs.ram}</span></div>
-                <div class="bg-white p-1.5 rounded-lg shadow-sm flex justify-between items-center"><span class="text-slate-400 text-[7px] sm:text-[8px] font-bold uppercase">STR</span> <span class="font-bold text-[9px] sm:text-xs text-slate-800">${p.specs.storage}</span></div>
-                <div class="bg-white p-1.5 rounded-lg shadow-sm flex justify-between items-center"><span class="text-slate-400 text-[7px] sm:text-[8px] font-bold uppercase">BAT</span> <span class="font-bold text-[9px] sm:text-xs text-slate-800">${p.specs.battery}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">RAM</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.ram}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">STR</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.storage}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">BAT</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.battery}</span></div>
             </div>
         </div>
     `;
@@ -302,15 +302,15 @@ function renderCart() {
     itemsContainer.innerHTML = cart.map(item => {
         total += item.price * item.quantity;
         return `
-            <div class="flex gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex gap-3 sm:gap-4 bg-white/10 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-white/20 shadow-sm">
                 <img src="${item.images[0]}" class="w-12 h-12 sm:w-16 sm:h-16 object-contain">
                 <div class="flex-grow">
-                    <h4 class="font-bold text-slate-800 text-xs sm:text-sm mb-1">${item.name}</h4>
-                    <p class="text-indigo-600 font-bold text-xs sm:text-sm mb-2">Rs. ${item.price.toLocaleString()}</p>
-                    <div class="flex items-center gap-3">
-                        <button onclick="changeQty(${item.id}, -1)" class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">-</button>
-                        <span class="font-bold text-slate-700">${item.quantity}</span>
-                        <button onclick="changeQty(${item.id}, 1)" class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">+</button>
+                    <h4 class="font-bold text-white text-xs sm:text-sm mb-1">${item.name}</h4>
+                    <p class="text-blue-400 font-bold text-xs sm:text-sm mb-2">Rs. ${item.price.toLocaleString()}</p>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-xs text-white hover:bg-white/20">-</button>
+                        <span class="font-bold text-white text-sm">${item.quantity}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-xs text-white hover:bg-white/20">+</button>
                     </div>
                 </div>
             </div>
@@ -367,11 +367,11 @@ function handleSearch(e) {
 
     if (matched.length > 0) {
         suggestions.innerHTML = matched.map(p => `
-            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-100 last:border-0" onclick="showDetails(${p.id})">
+            <div class="flex items-center gap-4 p-4 hover:bg-white/5 cursor-pointer transition border-b border-white/5 last:border-0" onclick="showDetails(${p.id})">
                 <img src="${p.images[0]}" class="w-12 h-12 object-contain rounded-lg">
                 <div>
-                    <p class="font-bold text-slate-800 text-sm">${p.name}</p>
-                    <p class="text-indigo-600 font-bold text-xs uppercase">Rs. ${p.price.toLocaleString()}</p>
+                    <p class="font-bold text-white text-sm">${p.name}</p>
+                    <p class="text-blue-400 font-bold text-xs uppercase">Rs. ${p.price.toLocaleString()}</p>
                 </div>
             </div>
         `).join('');
@@ -398,7 +398,7 @@ function showDetails(id) {
     brandBadge.innerHTML = `<span class="bg-indigo-50 text-indigo-600 px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-indigo-100">${p.brand}</span>`;
 
     const mainImg = document.getElementById('modal-main-image');
-    mainImg.innerHTML = `<img src="${p.images[0]}" class="w-full h-full max-h-[200px] sm:max-h-[300px] object-contain cursor-zoom-in" onclick="openLightbox()">`;
+    mainImg.innerHTML = `<img src="${p.images[0]}" class="w-full h-full max-h-[220px] sm:max-h-[350px] object-contain cursor-zoom-in" onclick="openLightbox()">`;
 
     const thumbnails = document.getElementById('modal-thumbnails');
     thumbnails.innerHTML = p.images.map((img, idx) => `
@@ -409,9 +409,9 @@ function showDetails(id) {
 
     const specs = document.getElementById('modal-specs');
     specs.innerHTML = `
-        <div class="bg-slate-50 p-2 md:p-3 rounded-xl text-center border border-slate-100"><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">RAM</p><p class="text-xs md:text-sm font-bold text-slate-800">${p.specs.ram}</p></div>
-        <div class="bg-slate-50 p-2 md:p-3 rounded-xl text-center border border-slate-100"><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Storage</p><p class="text-xs md:text-sm font-bold text-slate-800">${p.specs.storage}</p></div>
-        <div class="bg-slate-50 p-2 md:p-3 rounded-xl text-center border border-slate-100"><p class="text-[9px] text-slate-400 font-bold uppercase mb-1">Battery</p><p class="text-xs md:text-sm font-bold text-slate-800">${p.specs.battery}</p></div>
+        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">RAM</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.ram}</p></div>
+        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">Storage</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.storage}</p></div>
+        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">Battery</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.battery}</p></div>
     `;
 
     // Action Buttons
@@ -447,16 +447,16 @@ function showDetails(id) {
             installmentTextEl.innerText = p.installmentText;
             modalActions.insertBefore(installmentTextEl, addBtn);
         }
-
+        
         const calcBox = document.createElement('div');
         calcBox.id = 'modal-calc-box';
-        calcBox.className = "mt-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 mb-4";
+        calcBox.className = "mt-4 bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4";
         calcBox.innerHTML = `
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Installment Estimate (${config.advancePercentage}% Advance)</p>
+            <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Installment Estimate</p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[9px] text-slate-400 font-bold mb-1 uppercase">Advance</p><p class="text-xs font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
+                <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[8px] text-slate-400 font-bold uppercase">Advance</p><p class="text-[10px] font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
                 ${planResults.map(plan => `
-                    <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[9px] text-slate-400 font-bold mb-1 uppercase">${plan.months} Mo</p><p class="text-xs font-bold text-indigo-600">Rs. ${plan.perMonth.toLocaleString()}</p></div>
+                    <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[8px] text-slate-400 font-bold uppercase">${plan.months} Mo</p><p class="text-[10px] font-bold text-indigo-600">Rs. ${plan.perMonth.toLocaleString()}</p></div>
                 `).join('')}
             </div>
         `;
@@ -464,13 +464,9 @@ function showDetails(id) {
 
         const instBtn = document.createElement('button');
         instBtn.id = 'modal-installment-btn';
-        instBtn.className = "w-full mt-3 bg-slate-900 text-white py-4 rounded-2xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2";
-        instBtn.innerHTML = `<i class="fas fa-hand-holding-usd text-indigo-400"></i> Inquire Installment Plan`;
-        instBtn.onclick = () => {
-            const options = config.plans.map(pl => pl.months).join(', ') + " Months";
-            const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nAdvance Payment (${config.advancePercentage}%): Rs. ${downPayment.toLocaleString()}\nPlan options: ${options}`;
-            window.open(`https://wa.me/923420475187?text=${encodeURIComponent(msg)}`);
-        };
+        instBtn.className = "w-full mt-3 bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm";
+        instBtn.innerHTML = `<i class="fas fa-hand-holding-usd text-indigo-400"></i> Inquire Plan`;
+        instBtn.onclick = () => inquireInstallment(p.id);
         modalActions.appendChild(instBtn);
     }
 
