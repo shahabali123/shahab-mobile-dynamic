@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shahab-mobile-cache-v3'; // Cache version ko update karein
+const CACHE_NAME = 'shahab-mobile-cache-v4'; // Cache version ko update karein
 const urlsToCache = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const urlsToCache = [
     './app.js',
     './products.js',
     './hero.js',
+    './images/logo.png',
     './images/tecno-spark-go-3.webp',
     'https://cdn.tailwindcss.com'
     // Add other critical assets here (e.g., main CSS, common images)

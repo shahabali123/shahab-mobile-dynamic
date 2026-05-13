@@ -5,7 +5,7 @@ const heroConfig = {
     brandName: "SHAHAB MOBILE",
     title: "Premium Devices. <br> Trusted Quality.",
     description: "Mansehra's leading destination for original Phones, Samsung, and top brands. Official warranty and easy installments on Shinkiari Road.",
-    image: "./images/shahab-mobile-logo.png",
+    image: "./images/logo.png",
     primaryBtn: { text: "Explore Collection", link: "#product-grid" },
     secondaryBtn: { text: "Latest Offers", link: "offers.html" }, 
     installmentBtn: { text: "Easy Installments", link: "installments.html" }, // Added new button for Installments
