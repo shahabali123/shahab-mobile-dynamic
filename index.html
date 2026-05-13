@@ -114,10 +114,10 @@
             <div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
 
             <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-[#050505] z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/10 backdrop-blur-xl">
+            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-[#050505] z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/20">
                 <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
                     <h2 class="text-xl font-black uppercase tracking-widest text-white">Menu</h2>
-                    <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white/50">&times;</button>
+                    <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white">&times;</button>
                 </div>
                 <div class="flex flex-col p-8 gap-6 text-base font-bold text-white">
                     <a href="index.html" class="flex items-center gap-4 text-neon-blue p-4 bg-white/10 rounded-2xl"><i class="fas fa-home w-6"></i> Home</a>
@@ -220,27 +220,27 @@
         </div>
     </div>
 
-    <!-- Product Details Modal (Single Product View) -->
+    <!-- Product Details Modal -->
     <div id="product-modal" class="fixed inset-0 bg-[#0F0F14]/95 backdrop-blur-xl z-[70] hidden flex items-center justify-center p-4">
-        <div class="bg-[#151521] rounded-[3.5rem] max-w-6xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl animate-in zoom-in duration-300 border border-white/10">
-            <button onclick="closeDetails()" class="absolute top-8 right-8 z-20 w-14 h-14 flex items-center justify-center rounded-2xl bg-white/5 text-white/50 hover:text-white hover:bg-white/10 transition">&times;</button>
+        <div class="bg-[#151521] rounded-3xl md:rounded-[3.5rem] max-w-6xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl animate-in zoom-in duration-300 border border-white/10">
+            <button onclick="closeDetails()" class="absolute top-4 right-4 md:top-8 md:right-8 z-20 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[600px]">
-                <div class="bg-white/5 p-12 flex flex-col gap-8 relative overflow-hidden">
-                    <div id="modal-main-image" class="aspect-square rounded-[3rem] overflow-hidden bg-[#1A1A24] border border-white/5 shadow-2xl flex items-center justify-center group relative z-10">
+                <div class="bg-white/5 p-6 md:p-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
+                    <div id="modal-main-image" class="aspect-square rounded-2xl md:rounded-[3rem] overflow-hidden bg-[#1A1A24] border border-white/5 shadow-2xl flex items-center justify-center group relative z-10">
                         <!-- Image injected here -->
                     </div>
                     <div id="modal-thumbnails" class="flex gap-4 overflow-x-auto pb-4 px-1 custom-scrollbar relative z-10"></div>
                     <div class="absolute inset-0 bg-neon-gradient opacity-[0.03] blur-[150px]"></div>
                 </div>
-                <div class="p-12 md:p-20 flex flex-col justify-center bg-transparent">
+                <div class="p-6 md:p-12 lg:p-20 flex flex-col justify-center bg-transparent">
                     <div id="modal-brand-badge" class="mb-6"></div>
-                    <h2 id="modal-title" class="text-4xl md:text-6xl font-black mb-6 text-white leading-[1.1] tracking-tighter uppercase"></h2>
-                    <p id="modal-price" class="text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-10"></p>
-                    <div class="space-y-10">
+                    <h2 id="modal-title" class="text-2xl md:text-6xl font-black mb-4 md:mb-6 text-white leading-tight md:leading-[1.1] tracking-tighter uppercase"></h2>
+                    <p id="modal-price" class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-6 md:mb-10"></p>
+                    <div class="space-y-6 md:space-y-10">
                         <div id="modal-specs" class="grid grid-cols-3 gap-4"></div>
-                        <p id="modal-desc" class="text-white/50 leading-relaxed text-lg font-medium"></p>
-                        <button id="modal-add-btn" class="w-full bg-neon-gradient text-white py-6 rounded-3xl font-black uppercase tracking-widest hover:scale-[1.02] transition shadow-2xl shadow-purple-500/40 flex items-center justify-center gap-4">
-                            <i class="fas fa-cart-plus text-xl"></i> Instant Buy Now
+                        <p id="modal-desc" class="text-white/50 leading-relaxed text-sm md:text-lg font-medium"></p>
+                        <button id="modal-add-btn" class="w-full bg-neon-gradient text-white py-4 md:py-6 rounded-2xl md:rounded-3xl font-black uppercase tracking-widest text-xs md:text-base hover:scale-[1.02] transition shadow-2xl shadow-purple-500/40 flex items-center justify-center gap-4">
+                            <i class="fas fa-cart-plus text-lg md:text-xl"></i> Instant Buy Now
                         </button>
                     </div>
                 </div>
