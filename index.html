@@ -83,9 +83,9 @@
     </style>
 </head>
 <body class="bg-[#0F0F14] text-white overflow-x-hidden">
-    <nav class="glass sticky top-0 z-50 py-2 sm:py-3">
+    <nav class="glass sticky top-0 z-50 py-4 border-b border-white/5">
         <div class="container mx-auto px-4 md:px-8">
-            <div class="flex justify-between items-center gap-2 sm:gap-4">
+            <div class="flex flex-wrap lg:flex-nowrap justify-between items-center gap-y-3">
                 <div class="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
                     <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-8 h-8 sm:w-12 sm:h-12 object-contain filter brightness-110 rounded-lg sm:rounded-xl">
                     <h1 class="text-sm sm:text-2xl font-black tracking-tighter text-white uppercase">SHAHAB<span class="text-transparent bg-clip-text bg-neon-gradient">MOBILE</span></h1>
@@ -240,21 +240,21 @@
         <div class="bg-[#151521] rounded-3xl md:rounded-[3.5rem] max-w-6xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl animate-in zoom-in duration-300 border border-white/10">
             <button onclick="closeDetails()" class="absolute top-4 right-4 md:top-8 md:right-8 z-20 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[600px]">
-                <div class="bg-white/5 p-6 md:p-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
+                <div class="bg-white/5 p-4 md:p-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
                     <div id="modal-main-image" class="aspect-square rounded-2xl md:rounded-[3rem] overflow-hidden bg-[#1A1A24] border border-white/5 shadow-2xl flex items-center justify-center group relative z-10">
                         <!-- Image injected here -->
                     </div>
                     <div id="modal-thumbnails" class="flex gap-4 overflow-x-auto pb-4 px-1 custom-scrollbar relative z-10"></div>
                     <div class="absolute inset-0 bg-neon-gradient opacity-[0.03] blur-[150px]"></div>
                 </div>
-                <div class="p-6 md:p-12 lg:p-20 flex flex-col justify-center bg-transparent">
+                <div class="p-5 md:p-12 lg:p-20 flex flex-col justify-center bg-transparent w-full overflow-hidden">
                     <div id="modal-brand-badge" class="mb-6"></div>
-                    <h2 id="modal-title" class="text-2xl md:text-6xl font-black mb-4 md:mb-6 text-white leading-tight md:leading-[1.1] tracking-tighter uppercase"></h2>
-                    <p id="modal-price" class="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-6 md:mb-10"></p>
-                    <div class="space-y-6 md:space-y-10">
+                    <h2 id="modal-title" class="text-xl md:text-6xl font-black mb-3 md:mb-6 text-white leading-tight md:leading-[1.1] tracking-tighter uppercase truncate"></h2>
+                    <p id="modal-price" class="text-xl md:text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-5 md:mb-10"></p>
+                    <div class="space-y-5 md:space-y-10">
                         <div id="modal-specs" class="grid grid-cols-3 gap-4"></div>
-                        <p id="modal-desc" class="text-white/50 leading-relaxed text-sm md:text-lg font-medium"></p>
-                        <button id="modal-add-btn" class="w-full bg-neon-gradient text-white py-4 md:py-6 rounded-2xl md:rounded-3xl font-black uppercase tracking-widest text-xs md:text-base hover:scale-[1.02] transition shadow-2xl shadow-purple-500/40 flex items-center justify-center gap-4">
+                        <p id="modal-desc" class="text-white/50 leading-relaxed text-xs md:text-lg font-medium line-clamp-4 md:line-clamp-none"></p>
+                        <button id="modal-add-btn" class="w-full bg-neon-gradient text-white py-3.5 md:py-6 rounded-xl md:rounded-3xl font-black uppercase tracking-widest text-[10px] md:text-base hover:scale-[1.02] transition shadow-2xl shadow-purple-500/40 flex items-center justify-center gap-3">
                             <i class="fas fa-cart-plus text-lg md:text-xl"></i> Instant Buy Now
                         </button>
                     </div>
@@ -264,7 +264,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 glass border border-white/10 text-white px-8 py-5 rounded-3xl shadow-2xl hidden z-[100] font-bold flex flex-col md:flex-row items-center gap-6 animate-in slide-in-from-bottom duration-300">
+    <div id="toast" class="fixed bottom-8 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:right-auto md:w-max glass border border-white/10 text-white px-6 md:px-8 py-4 md:py-5 rounded-2xl md:rounded-3xl shadow-2xl hidden z-[100] font-bold flex flex-col md:flex-row items-center gap-4 md:gap-6 animate-in slide-in-from-bottom duration-300">
         <div class="flex items-center gap-3">
             <i class="fas fa-check-circle text-neon-blue text-3xl"></i>
             <span id="toast-msg"></span>

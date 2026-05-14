@@ -406,10 +406,11 @@ function showDetails(id) {
 
     const specs = document.getElementById('modal-specs');
     specs.innerHTML = `
-        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">RAM</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.ram}</p></div>
-        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">Storage</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.storage}</p></div>
-        <div class="bg-slate-50 p-2 rounded-lg text-center border border-slate-100"><p class="text-[8px] text-slate-400 font-bold uppercase">Battery</p><p class="text-[10px] sm:text-xs font-bold text-slate-800">${p.specs.battery}</p></div>
+        <div class="bg-white/5 p-2 rounded-lg text-center border border-white/5"><p class="text-[7px] text-white/40 font-bold uppercase">RAM</p><p class="text-[10px] sm:text-xs font-bold text-white">${p.specs.ram}</p></div>
+        <div class="bg-white/5 p-2 rounded-lg text-center border border-white/5"><p class="text-[7px] text-white/40 font-bold uppercase">Storage</p><p class="text-[10px] sm:text-xs font-bold text-white">${p.specs.storage}</p></div>
+        <div class="bg-white/5 p-2 rounded-lg text-center border border-white/5"><p class="text-[7px] text-white/40 font-bold uppercase">Battery</p><p class="text-[10px] sm:text-xs font-bold text-white">${p.specs.battery}</p></div>
     `;
+    specs.className = "grid grid-cols-3 gap-2 sm:gap-4";
 
     // Action Buttons
     const addBtn = document.getElementById('modal-add-btn');
