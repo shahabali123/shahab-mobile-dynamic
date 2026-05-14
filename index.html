@@ -7,6 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="description" content="Shahab Mobile Mansehra - Buy latest Phones, Samsung, Infinix, Tecno, Itel, Vgotel, Redmi, Apple and Google Pixel at best prices. Official warranty, free delivery on Shinkiari Road. Trusted mobile store in Pakistan. Installements available.">
     <link rel="icon" href="./images/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="./images/logo.png">
     <meta name="keywords" content="Mobile on installements,Shahab Mobile, Mansehra Mobile Shop, Buy iPhone Mansehra, Samsung S24 Ultra Pakistan, Mobile Price in Pakistan, Shinkiari Road Mobile Store, Shahab Mughal Mobile">
     <meta name="author" content="Shahab Mobile">
     <link rel="canonical" href="https://shahabmobile.netlify.app/index.html" />
@@ -16,12 +17,13 @@
     <meta property="og:url" content="https://shahabmobile.netlify.app/">
     <meta property="og:title" content="Shahab Mobile | Premium Smartphone Store Mansehra">
     <meta property="og:description" content="Latest smartphones with official warranty and fast delivery. Best mobile deals in Mansehra.">
-    <meta property="og:image" content="https://shahabmobile.netlify.app/assets/og-image.jpg">
+    <meta property="og:image" content="https://shahabmobile.netlify.app/images/logo.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="Shahab Mobile | Premium Smartphone Store">
     <meta property="twitter:description" content="Latest smartphones with official warranty and fast delivery.">
+    <meta property="twitter:image" content="https://shahabmobile.netlify.app/images/logo.png">
 
     <!-- Google search console -->
      <meta name="google-site-verification" content="MfrwdXRy6IoDaE1qU6Kd7i249TruVz2NEkTKaG-XJv8" />
@@ -85,18 +87,25 @@
         <div class="container mx-auto px-4 md:px-8">
             <div class="flex justify-between items-center gap-2 sm:gap-4">
                 <div class="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
-                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-8 h-8 sm:w-12 sm:h-12 object-contain filter brightness-110">
+                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-8 h-8 sm:w-12 sm:h-12 object-contain filter brightness-110 rounded-lg sm:rounded-xl">
                     <h1 class="text-sm sm:text-2xl font-black tracking-tighter text-white uppercase">SHAHAB<span class="text-transparent bg-clip-text bg-neon-gradient">MOBILE</span></h1>
                 </div>
 
-                <!-- Navbar Search (Compact for mobile) -->
-                <div class="relative flex-grow max-w-[140px] sm:max-w-md group">
-                    <i class="fas fa-search absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white/30 text-[10px] sm:text-base"></i>
-                    <input type="text" id="searchBar" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" placeholder="Search..." class="w-full bg-white/5 border border-white/10 pl-7 sm:pl-11 pr-2 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-[10px] sm:text-sm text-white placeholder:text-white/20" autocomplete="off">
-                    <div id="search-suggestions" class="absolute top-full left-0 right-0 mt-2 bg-[#050505] rounded-xl shadow-2xl border border-white/10 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
-                </div>
-
                 <div class="flex gap-1 sm:gap-4 items-center shrink-0">
+                    <!-- Desktop Navigation Links -->
+                    <div class="hidden md:flex gap-8 mr-6 font-bold text-white/50 text-sm uppercase tracking-widest">
+                        <a href="index.html" class="text-neon-blue transition">Home</a>
+                        <a href="offers.html" class="hover:text-neon-pink transition">Offers</a>
+                        <a href="installments.html" class="hover:text-neon-lime transition">Installments</a>
+                    </div>
+
+                    <!-- Desktop Search Bar -->
+                    <div class="hidden md:block relative group">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-sm"></i>
+                        <input type="text" id="searchBarDesktop" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" onfocus="handleSearch(event)" placeholder="Search devices..." class="bg-white/5 border border-white/10 pl-11 pr-4 py-2 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm text-white placeholder:text-white/20 w-64" autocomplete="off">
+                        <div id="search-suggestions-desktop" class="absolute top-full left-0 right-0 mt-2 bg-[#050505] rounded-xl shadow-2xl border border-white/10 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
+                    </div>
+
                     <button onclick="toggleFilters()" class="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition text-white/70">
                         <i class="fas fa-sliders-h text-sm sm:text-xl"></i>
                     </button>
@@ -104,7 +113,7 @@
                         <i class="fas fa-shopping-bag text-sm sm:text-xl text-white/70"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-neon-gradient text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center border border-[#0F0F14]">0</span>
                     </button>
-                    <button onclick="toggleMobileMenu()" class="p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition text-white/70">
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-1.5 sm:p-2 hover:bg-white/10 rounded-lg transition text-white/70">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -114,17 +123,23 @@
             <div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
 
             <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-[#050505] z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/20">
-                <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-black z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/20">
+                <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black rounded-t-3xl">
                     <h2 class="text-xl font-black uppercase tracking-widest text-white">Menu</h2>
                     <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white">&times;</button>
                 </div>
-                <div class="flex flex-col p-8 gap-6 text-base font-bold text-white">
-                    <a href="index.html" class="flex items-center gap-4 text-neon-blue p-4 bg-white/10 rounded-2xl"><i class="fas fa-home w-6"></i> Home</a>
+                <div class="flex flex-col py-8 px-4 gap-4 text-base font-bold text-white bg-black flex-grow rounded-b-3xl">
+                    <a href="index.html" class="flex items-center gap-4 text-neon-blue p-4 bg-white/5 border-l-4 border-neon-blue rounded-r-2xl"><i class="fas fa-home w-6"></i> Home</a>
                     <a href="offers.html" class="flex items-center gap-4 hover:text-neon-pink transition p-4"><i class="fas fa-tags w-6"></i> Offers</a>
                     <a href="installments.html" class="flex items-center gap-4 hover:text-neon-lime transition p-4"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
                     <div class="h-[1px] bg-white/5 my-2"></div>
                     <a href="index.html#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4 hover:text-neon-blue transition p-4"><i class="fas fa-th-large w-6"></i> Collection</a>
+                    <!-- Search Bar inside Mobile Menu -->
+                    <div class="relative w-full px-4 mt-6 group">
+                        <i class="fas fa-search absolute left-7 top-1/2 -translate-y-1/2 text-white/30 text-base"></i>
+                        <input type="text" id="searchBar" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" placeholder="Search..." class="w-full bg-white/5 border border-white/10 pl-11 pr-4 py-2.5 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm text-white placeholder:text-white/20" autocomplete="off">
+                        <div id="search-suggestions" class="absolute top-full left-4 right-4 mt-2 bg-[#050505] rounded-xl shadow-2xl border border-white/10 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
+                    </div>
                 </div>
             </div>
 
@@ -173,7 +188,7 @@
     </header>
 
     <!-- Product Grid -->
-    <main class="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" id="product-grid">
+    <main class="container mx-auto p-2 sm:p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-8" id="product-grid">
         <!-- Products will be injected here via JS -->
     </main>
 
@@ -269,12 +284,12 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-[#0F0F14] text-white pt-24 pb-12 mt-24 border-t border-white/5 relative overflow-hidden">
+    <footer class="bg-[#0F0F14] text-white pt-12 pb-12 mt-12 border-t border-white/5 relative overflow-hidden">
         <div class="blob bg-purple-900 opacity-[0.05] bottom-[-200px] left-[-200px] w-[600px] h-[600px]"></div>
         <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
             <div class="col-span-1 md:col-span-1">
                 <div class="flex items-center gap-4 mb-8">
-                    <img src="./images/logo.png" alt="Logo" class="w-12 h-12 object-contain filter brightness-125">
+                    <img src="./images/logo.png" alt="Logo" class="w-12 h-12 object-contain filter brightness-125 rounded-xl">
                     <h2 class="text-2xl font-black uppercase tracking-tighter">SHAHAB<span class="text-neon-blue">MOBILE</span></h2>
                 </div>
                 <p class="text-white/40 leading-relaxed mb-10 font-medium">Elevating your digital lifestyle with premium devices and futuristic service in Mansehra.</p>

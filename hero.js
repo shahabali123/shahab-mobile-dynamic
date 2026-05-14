@@ -17,7 +17,7 @@ function renderHero() {
     if (!container) return;
 
     container.innerHTML = `
-        <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-20 text-white relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center gap-8 md:gap-16 border border-white/5">
+        <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 rounded-[2rem] md:rounded-[4rem] p-6 md:p-20 text-white relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center gap-8 md:gap-16 border border-white/5">
             <div class="relative z-10 flex-1 text-center md:text-left">
                 <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
                     <span class="text-indigo-400 text-xs font-bold uppercase tracking-widest">${heroConfig.badge}</span>
@@ -39,7 +39,7 @@ function renderHero() {
             </div>
             
             <div class="relative z-10 flex-1 flex justify-center mt-8 md:mt-0">
-                <img src="${heroConfig.image}" alt="Featured" class="w-full max-w-sm h-auto drop-shadow-2xl">
+                <img src="${heroConfig.image}" alt="Featured" class="w-full max-w-sm h-auto drop-shadow-2xl rounded-[2rem]">
             </div>
 
             <div class="absolute right-[-5%] bottom-[-5%] opacity-5 text-9xl font-black select-none pointer-events-none uppercase italic whitespace-nowrap">

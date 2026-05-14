@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close suggestions when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.group')) {
-            document.getElementById('search-suggestions')?.classList.add('hidden');
+            document.querySelectorAll('[id^="search-suggestions"]').forEach(el => el.classList.add('hidden'));
         }
     });
 
@@ -55,7 +55,8 @@ function renderProducts(resetPage = false, shouldScroll = false) {
     
     // Apply Navbar Search Filter
     const searchInp = document.getElementById('searchBar');
-    const query = searchInp?.value.toLowerCase();
+    const searchInpDesktop = document.getElementById('searchBarDesktop');
+    const query = (searchInp?.value || searchInpDesktop?.value || "").toLowerCase();
     if (query) {
         filtered = filtered.filter(p => 
             p.name.toLowerCase().includes(query) || 
@@ -123,14 +124,14 @@ function renderProducts(resetPage = false, shouldScroll = false) {
         // Check if we are on the installments page to change the primary button
         const isInstallmentsPage = window.filterOnlyInstallments;
         const mainBtnHtml = isInstallmentsPage 
-            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-2.5 rounded-lg font-bold text-[10px] sm:text-xs hover:bg-slate-800 transition flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-indigo-400"></i> Inquire</button>`
-            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-indigo-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">Add to Cart</button>`;
+            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-2 rounded-lg font-bold text-[9px] sm:text-xs hover:bg-slate-800 transition flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-indigo-400"></i> Inquire</button>`
+            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-indigo-600 text-white py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-bold text-[10px] sm:text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">Add to Cart</button>`;
 
         return `
-        <div class="product-card reveal-item bg-white rounded-2xl p-3 sm:p-4 border border-slate-100 group relative transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-            <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">${product.badge.text}</span>` : ''}
-                ${product.freeDelivery ? '<span class="bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md">Free Delivery</span>' : ''}
+        <div class="product-card reveal-item bg-white rounded-xl sm:rounded-2xl p-2 sm:p-4 border border-slate-100 group relative transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+            <div class="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-col gap-1 sm:gap-2 z-10">
+                ${product.badge ? `<span class="${product.badge.color} text-white text-[8px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-md">${product.badge.text}</span>` : ''}
+                ${product.freeDelivery ? '<span class="bg-emerald-500 text-white text-[8px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-md">Free Delivery</span>' : ''}
                 ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
             </div>
             
@@ -139,13 +140,13 @@ function renderProducts(resetPage = false, shouldScroll = false) {
             </div>
             
             <p class="text-indigo-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
-            <h3 class="font-bold text-slate-800 mb-2 truncate text-sm" title="${product.name}">${product.name}</h3>
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-lg font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
+            <h3 class="font-bold text-slate-800 mb-1 sm:mb-2 truncate text-[11px] sm:text-sm" title="${product.name}">${product.name}</h3>
+            <div class="flex justify-between items-center mb-3 sm:mb-4">
+                <p class="text-sm sm:text-lg font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
             </div>
             <div class="flex gap-2 relative z-20">
                 ${mainBtnHtml}
-                <button onclick="toggleCompare(${product.id})" class="w-10 h-10 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-indigo-600 hover:text-indigo-600'} transition">
+                <button onclick="toggleCompare(${product.id})" class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-indigo-600 hover:text-indigo-600'} transition text-xs sm:text-base">
                     <i class="fas fa-balance-scale"></i>
                 </button>
             </div>
@@ -162,14 +163,6 @@ function renderProducts(resetPage = false, shouldScroll = false) {
             productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
-}
-
-// Helper to sync mobile and desktop search without automatic rendering
-function syncSearch(val) {
-    const dSearch = document.getElementById('searchBar');
-    const mSearch = document.getElementById('searchBarMobile');
-    if (dSearch) dSearch.value = val;
-    if (mSearch) mSearch.value = val;
 }
 
 function toggleFilters() {
@@ -353,8 +346,12 @@ function inquireInstallment(id) {
 // Search Logic
 function handleSearch(e) {
     const query = e.target.value.toLowerCase();
-    const suggestions = document.getElementById('search-suggestions');
+    const suggestions = e.target.id === 'searchBarDesktop' 
+        ? document.getElementById('search-suggestions-desktop') 
+        : document.getElementById('search-suggestions');
     
+    if (!suggestions) return;
+
     if (!query) {
         suggestions.classList.add('hidden');
         return;
