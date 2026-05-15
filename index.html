@@ -86,9 +86,9 @@
     <nav class="glass sticky top-0 z-50 py-4 border-b border-white/5">
         <div class="container mx-auto px-4 md:px-8">
             <div class="flex flex-wrap lg:flex-nowrap justify-between items-center gap-y-3">
-                <div class="flex items-center gap-2 sm:gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
-                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-8 h-8 sm:w-12 sm:h-12 object-contain filter brightness-110 rounded-lg sm:rounded-xl">
-                    <h1 class="text-sm sm:text-2xl font-black tracking-tighter text-white uppercase">SHAHAB<span class="text-transparent bg-clip-text bg-neon-gradient">MOBILE</span></h1>
+                <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="location.reload()">
+                    <img src="./images/logo.png" alt="Shahab Mobile Logo" class="w-12 h-12 object-contain filter brightness-110 rounded-lg sm:rounded-xl">
+                    <h1 class="text-xl md:text-2xl font-black tracking-tighter text-white uppercase">SHAHAB<span class="text-transparent bg-clip-text bg-neon-gradient">MOBILE</span></h1>
                 </div>
 
                 <div class="flex gap-1 sm:gap-4 items-center shrink-0">
@@ -118,31 +118,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Mobile Menu Overlay -->
-            <div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
-
-            <!-- Mobile Navigation Menu -->
-            <div id="mobile-menu" class="fixed top-4 right-4 bottom-4 max-w-[280px] w-11/12 bg-black z-[100] translate-x-full transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-white/20">
-                <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black rounded-t-3xl">
-                    <h2 class="text-xl font-black uppercase tracking-widest text-white">Menu</h2>
-                    <button onclick="toggleMobileMenu()" class="text-3xl font-light text-white">&times;</button>
-                </div>
-                <div class="flex flex-col py-8 px-4 gap-4 text-base font-bold text-white bg-black flex-grow rounded-b-3xl">
-                    <a href="index.html" class="flex items-center gap-4 text-neon-blue p-4 bg-white/5 border-l-4 border-neon-blue rounded-r-2xl"><i class="fas fa-home w-6"></i> Home</a>
-                    <a href="offers.html" class="flex items-center gap-4 hover:text-neon-pink transition p-4"><i class="fas fa-tags w-6"></i> Offers</a>
-                    <a href="installments.html" class="flex items-center gap-4 hover:text-neon-lime transition p-4"><i class="fas fa-calendar-alt w-6"></i> Installments</a>
-                    <div class="h-[1px] bg-white/5 my-2"></div>
-                    <a href="index.html#product-grid" onclick="toggleMobileMenu()" class="flex items-center gap-4 hover:text-neon-blue transition p-4"><i class="fas fa-th-large w-6"></i> Collection</a>
-                    <!-- Search Bar inside Mobile Menu -->
-                    <div class="relative w-full px-4 mt-6 group">
-                        <i class="fas fa-search absolute left-7 top-1/2 -translate-y-1/2 text-white/30 text-base"></i>
-                        <input type="text" id="searchBar" onkeyup="if(event.key === 'Enter') renderProducts(true, true); handleSearch(event)" placeholder="Search..." class="w-full bg-white/5 border border-white/10 pl-11 pr-4 py-2.5 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm text-white placeholder:text-white/20" autocomplete="off">
-                        <div id="search-suggestions" class="absolute top-full left-4 right-4 mt-2 bg-[#050505] rounded-xl shadow-2xl border border-white/10 hidden z-[100] max-h-64 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Filters Dropdown -->
             <div id="filters-dropdown" class="hidden mt-6 pb-6 space-y-6 border-t border-white/5 pt-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -209,10 +184,10 @@
     <!-- Comparison Modal -->
     <div id="compare-modal" class="fixed inset-0 bg-[#0F0F14]/90 backdrop-blur-xl z-[80] hidden flex items-center justify-center p-4">
         <div class="bg-[#050505] rounded-[3rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-white/10">
-            <button onclick="closeCompareModal()" class="absolute top-6 right-6 z-10 w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
-            <div class="p-8 md:p-16">
-                <h2 class="text-2xl md:text-4xl font-black text-white mb-10 text-center uppercase tracking-tighter">Side-by-Side <span class="text-neon-blue">Comparison</span></h2>
-                <div class="grid grid-cols-2 gap-2 md:gap-8" id="compare-content"></div>
+            <button onclick="closeCompareModal()" class="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-xl md:rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
+            <div class="p-5 md:p-16">
+                <h2 class="text-xl md:text-4xl font-black text-white mb-6 md:mb-10 text-center uppercase tracking-tighter">Side-by-Side <span class="text-neon-blue">Comparison</span></h2>
+                <div class="grid grid-cols-2 gap-3 md:gap-8" id="compare-content"></div>
             </div>
         </div>
     </div>
@@ -239,7 +214,7 @@
     <div id="product-modal" class="fixed inset-0 bg-[#0F0F14]/95 backdrop-blur-xl z-[70] hidden flex items-center justify-center p-4">
         <div class="bg-[#151521] rounded-3xl md:rounded-[3.5rem] max-w-6xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl animate-in zoom-in duration-300 border border-white/10">
             <button onclick="closeDetails()" class="absolute top-4 right-4 md:top-8 md:right-8 z-20 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl bg-white/5 text-white/50 hover:text-white transition">&times;</button>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[600px]">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 md:min-h-[600px]">
                 <div class="bg-white/5 p-4 md:p-12 flex flex-col gap-6 md:gap-8 relative overflow-hidden">
                     <div id="modal-main-image" class="aspect-square rounded-2xl md:rounded-[3rem] overflow-hidden bg-[#1A1A24] border border-white/5 shadow-2xl flex items-center justify-center group relative z-10">
                         <!-- Image injected here -->
@@ -247,9 +222,9 @@
                     <div id="modal-thumbnails" class="flex gap-4 overflow-x-auto pb-4 px-1 custom-scrollbar relative z-10"></div>
                     <div class="absolute inset-0 bg-neon-gradient opacity-[0.03] blur-[150px]"></div>
                 </div>
-                <div class="p-5 md:p-12 lg:p-20 flex flex-col justify-center bg-transparent w-full overflow-hidden">
+                <div class="px-4 py-5 md:p-12 lg:p-20 flex flex-col justify-center bg-transparent w-full overflow-hidden">
                     <div id="modal-brand-badge" class="mb-6"></div>
-                    <h2 id="modal-title" class="text-xl md:text-6xl font-black mb-3 md:mb-6 text-white leading-tight md:leading-[1.1] tracking-tighter uppercase truncate"></h2>
+                    <h2 id="modal-title" class="text-xl md:text-6xl font-black mb-3 md:mb-6 text-white leading-tight md:leading-[1.1] tracking-tighter uppercase break-words"></h2>
                     <p id="modal-price" class="text-xl md:text-4xl font-black text-transparent bg-clip-text bg-neon-gradient mb-5 md:mb-10"></p>
                     <div class="space-y-5 md:space-y-10">
                         <div id="modal-specs" class="grid grid-cols-3 gap-4"></div>

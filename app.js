@@ -233,14 +233,14 @@ function openCompareModal() {
     
     const content = document.getElementById('compare-content');
     const createSlot = (p) => `
-        <div class="bg-white/10 p-2 sm:p-4 rounded-xl border border-white/10 flex flex-col items-center text-center w-full max-w-full">
-            <img src="${p.images[0]}" class="w-12 h-12 sm:w-20 sm:h-20 object-contain mb-2 rounded-lg">
+        <div class="bg-white/10 p-2 sm:p-4 rounded-xl border border-white/10 flex flex-col items-center text-center w-full overflow-hidden">
+            <img src="${p.images[0]}" class="w-10 h-10 sm:w-20 sm:h-20 object-contain mb-2 rounded-lg">
             <h4 class="font-bold text-[10px] sm:text-sm mb-1 text-white line-clamp-1">${p.name}</h4>
-            <p class="text-[10px] sm:text-lg font-black text-blue-400 mb-2 sm:mb-4">Rs. ${p.price.toLocaleString()}</p>
+            <p class="text-[9px] sm:text-lg font-black text-blue-400 mb-2 sm:mb-4">Rs. ${p.price.toLocaleString()}</p>
             <div class="w-full space-y-2">
-                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">RAM</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.ram}</span></div>
-                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">STR</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.storage}</span></div>
-                <div class="bg-white/5 p-1 rounded-lg shadow-sm flex justify-between items-center"><span class="text-white/40 text-[7px] sm:text-[8px] font-bold uppercase">BAT</span> <span class="font-bold text-[8px] sm:text-xs text-white">${p.specs.battery}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg flex justify-between items-center gap-1"><span class="text-white/40 text-[6px] sm:text-[8px] font-bold uppercase shrink-0">RAM</span> <span class="font-bold text-[7px] sm:text-xs text-white truncate text-right">${p.specs.ram}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg flex justify-between items-center gap-1"><span class="text-white/40 text-[6px] sm:text-[8px] font-bold uppercase shrink-0">STR</span> <span class="font-bold text-[7px] sm:text-xs text-white truncate text-right">${p.specs.storage}</span></div>
+                <div class="bg-white/5 p-1 rounded-lg flex justify-between items-center gap-1"><span class="text-white/40 text-[6px] sm:text-[8px] font-bold uppercase shrink-0">BAT</span> <span class="font-bold text-[7px] sm:text-xs text-white truncate text-right">${p.specs.battery}</span></div>
             </div>
         </div>
     `;
@@ -448,13 +448,13 @@ function showDetails(id) {
         
         const calcBox = document.createElement('div');
         calcBox.id = 'modal-calc-box';
-        calcBox.className = "mt-4 bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4";
+        calcBox.className = "mt-4 bg-white/5 p-3 rounded-xl border border-white/5 mb-4";
         calcBox.innerHTML = `
-            <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Installment Estimate</p>
+            <p class="text-[9px] font-bold text-white/40 uppercase mb-2">Installment Estimate</p>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[8px] text-slate-400 font-bold uppercase">Advance</p><p class="text-[10px] font-bold text-slate-800">Rs. ${downPayment.toLocaleString()}</p></div>
+                <div class="bg-white/5 p-2 rounded-lg text-center"><p class="text-[8px] text-white/40 font-bold uppercase">Advance</p><p class="text-[10px] font-bold text-white">Rs. ${downPayment.toLocaleString()}</p></div>
                 ${planResults.map(plan => `
-                    <div class="bg-white p-2 rounded-lg text-center shadow-sm"><p class="text-[8px] text-slate-400 font-bold uppercase">${plan.months} Mo</p><p class="text-[10px] font-bold text-indigo-600">Rs. ${plan.perMonth.toLocaleString()}</p></div>
+                    <div class="bg-white/5 p-2 rounded-lg text-center"><p class="text-[8px] text-white/40 font-bold uppercase">${plan.months} Mo</p><p class="text-[10px] font-bold text-neon-blue">Rs. ${plan.perMonth.toLocaleString()}</p></div>
                 `).join('')}
             </div>
         `;
