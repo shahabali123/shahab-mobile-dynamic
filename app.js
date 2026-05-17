@@ -6,6 +6,13 @@ let lightboxImages = [];
 let lightboxIndex = 0;
 const itemsPerPage = 8;
 
+// Helper function for haptic feedback (Vibration)
+function triggerVibration(duration = 20) {
+    if ('vibrate' in navigator) {
+        navigator.vibrate(duration);
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
@@ -187,6 +194,8 @@ function toggleMobileMenu() {
     menu.classList.toggle('translate-x-[120%]');
     overlay?.classList.toggle('hidden');
     
+    triggerVibration(25); // Vibrate on menu toggle
+
     // Fix: If opening, lock scroll. If closing, restore it.
     document.body.style.overflow = isOpening ? 'hidden' : 'auto';
 }
@@ -200,6 +209,8 @@ function resetFilters() {
 
 // Comparison Logic
 function toggleCompare(id) {
+    triggerVibration(30); // Vibrate on compare button click
+
     const index = compareList.indexOf(id);
     if (index > -1) {
         compareList.splice(index, 1);
@@ -270,6 +281,8 @@ function clearCompareList() {
 
 // Cart Logic
 function addToCart(id) {
+    triggerVibration(40); // Slightly stronger vibration for adding to cart
+
     const product = products.find(p => p.id === id);
     const existing = cart.find(item => item.id === id);
     if (existing) {
@@ -330,6 +343,8 @@ function changeQty(id, delta) {
 }
 
 function checkoutWhatsApp() {
+    triggerVibration(30);
+
     if (cart.length === 0) return alert("Cart is empty");
     let text = "Hello Shahab Mobile, I want to order:\n\n";
     cart.forEach(item => text += `• ${item.name} x ${item.quantity} (Rs. ${(item.price * item.quantity).toLocaleString()})\n`);
@@ -338,6 +353,8 @@ function checkoutWhatsApp() {
 }
 
 function inquireInstallment(id) {
+    triggerVibration(30);
+
     const p = products.find(product => product.id === id);
     if (!p) return;
 
@@ -386,6 +403,8 @@ function handleSearch(e) {
 function showDetails(id) {
     const p = products.find(product => product.id === id);
     if (!p) return;
+
+    triggerVibration(20); // Subtle vibration for opening details
 
     lightboxImages = p.images;
     lightboxIndex = 0;
