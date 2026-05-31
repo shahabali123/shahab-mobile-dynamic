@@ -13,6 +13,16 @@ function triggerVibration(duration = 20) {
     }
 }
 
+// Helper function to hide the loading screen
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.addEventListener('transitionend', () => {
+            loadingScreen.remove();
+        });
+    }
+}
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
