@@ -18,7 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateCompareUI();
     initScrollReveal();
-    renderProducts(true, false); // Ab products render honge aur observe kiye jayenge
+    
+    // Only render grid if we are on index/offers/installments (main product listing pages)
+    if (document.getElementById('product-grid')) {
+        renderProducts(true, false);
+    }
 
     // Close suggestions when clicking outside
     document.addEventListener('click', (e) => {
@@ -64,6 +68,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/**
+ * Generates the HTML for a single product card.
+ * @param {object} product - The product object.
+ * @param {boolean} isInstallmentsPage - True if rendering for the installments page.
+ * @returns {string} The HTML string for the product card.
+ */
+function createProductCardHtml(product, isInstallmentsPage = false) {
+        // Check if we are on the installments page to change the primary button
+        const mainBtnHtml = isInstallmentsPage 
+            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold text-[10px] hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-blue-400"></i> Inquire Plan</button>`
+            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>`;
+
+        return `
+        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" 
+             onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
+            <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
+                ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
+                ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
+                ${product.installmentText ? `<span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.installmentText}</span>` : ''}
+            </div>
+            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="window.location.href='product.html?id=${product.id}'">
+                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500">
+            </div>
+            <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
+            <h3 class="font-bold text-slate-800 mb-2 truncate cursor-pointer hover:text-blue-600" title="${product.name}" onclick="window.location.href='product.html?id=${product.id}'">${product.name}</h3>
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
+            </div>
+            <div class="flex gap-2 relative z-20">
+                ${mainBtnHtml}
+                <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-blue-600 hover:text-blue-600'} transition">
+                    <i class="fas fa-balance-scale"></i>
+                </button>
+            </div>
+        </div>
+    `;
+}
 
 // Render Products
 function renderProducts(resetPage = false, shouldScroll = false) {
@@ -140,38 +183,7 @@ function renderProducts(resetPage = false, shouldScroll = false) {
     const start = (currentPage - 1) * itemsPerPage;
     const paginated = filtered.slice(start, start + itemsPerPage);
 
-    grid.innerHTML = paginated.map(product => {
-        // Check if we are on the installments page to change the primary button
-        const isInstallmentsPage = window.filterOnlyInstallments;
-        const mainBtnHtml = isInstallmentsPage 
-            ? `<button onclick="inquireInstallment(${product.id})" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold text-[10px] hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-1"><i class="fas fa-hand-holding-usd text-blue-400"></i> Inquire Plan</button>`
-            : `<button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>`;
-
-        return `
-        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
-            <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
-                ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
-                ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
-                ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
-                ${product.installmentText ? `<span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.installmentText}</span>` : ''}
-            </div>
-            
-            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="showDetails(${product.id})">
-                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500">
-            </div>
-            <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
-            <h3 class="font-bold text-slate-800 mb-2 truncate" title="${product.name}">${product.name}</h3>
-            <div class="flex justify-between items-center mb-4">
-                <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
-            </div>
-            <div class="flex gap-2 relative z-20">
-                ${mainBtnHtml}
-                <button onclick="toggleCompare(${product.id})" class="w-12 h-12 flex items-center justify-center rounded-xl border-2 ${compareList.includes(product.id) ? 'bg-slate-900 border-slate-900 text-white' : 'border-slate-100 text-slate-400 hover:border-blue-600 hover:text-blue-600'} transition">
-                    <i class="fas fa-balance-scale"></i>
-                </button>
-            </div>
-        </div>
-    `}).join('');
+    grid.innerHTML = paginated.map(product => createProductCardHtml(product, window.filterOnlyInstallments)).join('');
 
     renderPagination(filtered.length);
     observeElements();
@@ -398,7 +410,7 @@ function handleSearch(e) {
 
     if (matched.length > 0) {
         suggestions.innerHTML = matched.map(p => `
-            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-50 last:border-0" onclick="showDetails(${p.id})">
+            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-50 last:border-0" onclick="window.location.href='product.html?id=${p.id}'">
                 <img src="${p.images[0]}" class="w-12 h-12 object-contain rounded-lg">
                 <div>
                     <p class="font-bold text-slate-800 text-sm">${p.name}</p>
@@ -510,6 +522,142 @@ function showDetails(id) {
     document.getElementById('product-modal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.getElementById('search-suggestions')?.classList.add('hidden');
+}
+
+// Single Product Page Logic
+function initProductPage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = parseInt(urlParams.get('id'));
+    const container = document.getElementById('product-page-content');
+    
+    if (!container) return;
+    
+    const p = products.find(product => product.id === productId);
+    
+    if (!p) {
+        container.innerHTML = `
+            <div class="p-20 text-center">
+                <h2 class="text-3xl font-bold mb-4">Product Not Found</h2>
+                <a href="index.html" class="text-blue-600 font-bold">Return to Home</a>
+            </div>
+        `;
+        return;
+    }
+
+    // Update SEO Metadata
+    document.title = `${p.name} - Rs. ${p.price.toLocaleString()} | Shahab Mobile`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', `Buy ${p.name} for Rs. ${p.price.toLocaleString()} at Shahab Mobile Mansehra. ${p.description}`);
+
+    // Render full page content
+    const config = typeof installmentConfig !== 'undefined' ? installmentConfig : { advancePercentage: 20, plans: [] };
+    const downPayment = Math.round(p.price * (config.advancePercentage / 100));
+    const remaining = p.price - downPayment;
+    const planResults = config.plans.map(plan => ({
+        months: plan.months,
+        perMonth: Math.round((remaining * (1 + plan.markup / 100)) / plan.months)
+    }));
+
+    container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
+            <div class="bg-slate-50 p-8 md:p-16 flex flex-col gap-6 items-center">
+                <div class="aspect-square w-full max-w-md bg-white rounded-[3rem] shadow-inner border border-slate-100 flex items-center justify-center p-8">
+                    <img src="${p.images[0]}" class="max-w-full max-h-full object-contain">
+                </div>
+                <div class="flex gap-4 overflow-x-auto w-full justify-center">
+                    ${p.images.map((img, idx) => `
+                        <div class="w-20 h-20 rounded-2xl bg-white border border-slate-100 p-2 flex-shrink-0">
+                            <img src="${img}" class="w-full h-full object-contain">
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="p-8 md:p-16 flex flex-col justify-center">
+                <span class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 w-fit">${p.brand}</span>
+                <h2 class="text-4xl md:text-5xl font-black mb-4 text-slate-900">${p.name}</h2>
+                <p class="text-3xl font-bold text-blue-600 mb-8">Rs. ${p.price.toLocaleString()}</p>
+                
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">RAM</p><p class="font-bold">${p.specs.ram}</p></div>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Storage</p><p class="font-bold">${p.specs.storage}</p></div>
+                    <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Battery</p><p class="font-bold">${p.specs.battery}</p></div>
+                </div>
+
+                <p class="text-slate-600 leading-relaxed mb-10 text-lg">${p.description}</p>
+
+                ${p.installment ? `
+                    <div class="mb-8 p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-4 flex items-center gap-2"><i class="fas fa-calculator"></i> Installment Plan</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-white p-3 rounded-xl shadow-sm"><p class="text-[10px] text-slate-400">Advance</p><p class="font-bold text-sm">Rs. ${downPayment.toLocaleString()}</p></div>
+                            ${planResults.map(plan => `
+                                <div class="bg-white p-3 rounded-xl shadow-sm"><p class="text-[10px] text-slate-400">${plan.months} Mo</p><p class="font-bold text-sm text-blue-600">Rs. ${plan.perMonth.toLocaleString()}</p></div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="addToCart(${p.id})" class="flex-grow bg-blue-600 text-white py-5 rounded-2xl font-bold text-lg hover:bg-blue-700 transition shadow-xl shadow-blue-100">
+                        <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+                    </button>
+                    <button onclick="shareProduct(${p.id})" class="bg-slate-100 text-slate-600 px-8 py-5 rounded-2xl font-bold hover:bg-slate-200 transition">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Render Related Products
+    const relatedProductsGrid = document.getElementById('related-products-grid');
+    if (relatedProductsGrid) {
+        const relatedProducts = products.filter(item => 
+            item.id !== p.id && // Exclude the current product
+            item.specs.ram === p.specs.ram && 
+            item.specs.storage === p.specs.storage
+        );
+
+        // Shuffle and take up to 4 related products
+        const shuffledRelated = relatedProducts.sort(() => 0.5 - Math.random()).slice(0, 4);
+
+        if (shuffledRelated.length > 0) {
+            relatedProductsGrid.innerHTML = shuffledRelated.map(relatedP => createProductCardHtml(relatedP)).join('');
+        } else {
+            relatedProductsGrid.innerHTML = `
+                <div class="col-span-full text-center text-slate-500 py-8">
+                    <p>No other related products found with similar RAM and Storage.</p>
+                </div>
+            `;
+        }
+    }
+
+    // Ensure scroll reveal observes new elements
+    initScrollReveal();
+    observeElements();
+}
+
+function shareProduct(productId) {
+    const p = products.find(product => product.id == productId);
+    if (!p) {
+        showToast("Product not found for sharing.", "error");
+        return;
+    }
+
+    const shareUrl = window.location.href; // Direct link to this specific product page
+    const shareText = `${shareUrl}\n\n📱 *${p.name}*\n\n📝 ${p.description}\n\n💰 *Price: Rs. ${p.price.toLocaleString()}*`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: p.name,
+            text: shareText,
+            url: shareUrl
+        });
+    } else {
+        // Fallback for non-Web Share API browsers (e.g., desktop WhatsApp)
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+        showToast("WhatsApp share opened. Link copied to clipboard!", "info");
+    }
 }
 
 function updateMainImage(index) {

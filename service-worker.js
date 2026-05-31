@@ -2,6 +2,7 @@ const CACHE_NAME = 'shahab-mobile-cache-v5'; // Version update for instant refre
 const urlsToCache = [
     './',
     './index.html',
+    './product.html', // Added for single product page
     './offers.html',
     './installments.html',
     './manifest.json',
