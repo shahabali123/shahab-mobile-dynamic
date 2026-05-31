@@ -33,6 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.serviceWorker.register('./service-worker.js')
                 .then(registration => {
                     console.log('ServiceWorker registered: ', registration.scope);
+                    
+                    // Update detection logic
+                    registration.onupdatefound = () => {
+                        const installingWorker = registration.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // Nayi update mil gayi, page reload karo
+                                    console.log('New content available, reloading...');
+                                    window.location.reload();
+                                }
+                            }
+                        };
+                    };
                 })
                 .catch(err => {
                     console.log('ServiceWorker registration failed: ', err);

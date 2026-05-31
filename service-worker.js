@@ -1,4 +1,4 @@
-const CACHE_NAME = 'shahab-mobile-cache-v4'; // Cache version ko update karein
+const CACHE_NAME = 'shahab-mobile-cache-v5'; // Version update for instant refresh
 const urlsToCache = [
     './',
     './index.html',
@@ -15,12 +15,28 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
+    self.skipWaiting(); // Naye worker ko foran active karo
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
                 console.log('Service Worker: Opened cache');
                 return cache.addAll(urlsToCache);
             })
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Service Worker: Deleting old cache', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
     );
 });
 
