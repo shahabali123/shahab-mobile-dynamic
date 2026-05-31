@@ -13,6 +13,15 @@ function triggerVibration(duration = 20) {
     }
 }
 
+// Helper function to hide the global loading screen
+function hideLoadingScreen() {
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 500);
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
@@ -22,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only render grid if we are on index/offers/installments (main product listing pages)
     if (document.getElementById('product-grid')) {
         renderProducts(true, false);
+        hideLoadingScreen();
+    } else if (document.getElementById('product-page-content')) {
+        initProductPage();
+        hideLoadingScreen();
     }
 
     // Close suggestions when clicking outside

@@ -91,9 +91,32 @@
             50% { transform: translateY(-20px) rotate(-3deg); }
         }
         .animate-float-3d { animation: float 6s ease-in-out infinite; }
+
+        /* Custom Loader Styles */
+        .loader-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid #2563eb;
+            animation: spin-loader 1s linear infinite;
+        }
+        @keyframes spin-loader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-900 overflow-x-hidden">
+
+    <!-- Global Page Loader -->
+    <div id="loading-screen" class="fixed inset-0 bg-white z-[9999] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex items-center justify-center">
+            <div class="loader-ring"></div>
+            <img src="./images/logo.png" class="absolute w-12 h-12 rounded-2xl object-contain shadow-sm">
+        </div>
+        <p class="text-slate-400 font-bold mt-4 animate-pulse tracking-wide">Loading Shahab Mobile...</p>
+    </div>
 
     <!-- Header -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 py-3 transition-all duration-300 hover:shadow-md">
