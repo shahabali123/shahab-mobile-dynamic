@@ -574,6 +574,37 @@ function initProductPage() {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute('content', `Buy ${p.name} for Rs. ${p.price.toLocaleString()} at Shahab Mobile Mansehra. ${p.description}`);
 
+    // Dynamic Structured Data for SEO (Product Schema)
+    const productSchema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": p.name,
+        "image": [window.location.origin + p.images[0].replace('./', '/')],
+        "description": p.description,
+        "brand": {
+            "@type": "Brand",
+            "name": p.brand
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "PKR",
+            "price": p.price,
+            "availability": p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "itemCondition": "https://schema.org/NewCondition"
+        }
+    };
+
+    // Remove old schema if exists and inject new one
+    const existingSchema = document.getElementById('product-json-ld');
+    if (existingSchema) existingSchema.remove();
+
+    const script = document.createElement('script');
+    script.id = 'product-json-ld';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(productSchema);
+    document.head.appendChild(script);
+
     // Render full page content
     const config = typeof installmentConfig !== 'undefined' ? installmentConfig : { advancePercentage: 20, plans: [] };
     const downPayment = Math.round(p.price * (config.advancePercentage / 100));
