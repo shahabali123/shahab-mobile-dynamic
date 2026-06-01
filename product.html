@@ -30,6 +30,31 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Image Loader Styles */
+        .loading-image-container {
+            position: relative;
+            display: flex; /* To center content */
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc; /* Or match parent background */
+            min-height: 50px; /* Prevent collapse if image is not loaded */
+        }
+        .loading-image-container .image-loader {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8; /* Tailwind slate-400 */
+            font-size: 0.875rem; /* Tailwind text-sm */
+            z-index: 1;
+            text-align: center;
+        }
+        .loading-image-container .image-loader i { font-size: 1.25rem; /* Tailwind text-xl */ margin-bottom: 0.5rem; /* Tailwind mb-2 */ }
+        .loading-image-container img { display: none; /* Hide image initially */ width: 100%; height: 100%; object-fit: contain; z-index: 2; }
+        .loading-image-container.loaded img { display: block; /* Show image when loaded */ }
+        .loading-image-container.loaded .image-loader { display: none; /* Hide loader when loaded */ }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-900 overflow-x-hidden">

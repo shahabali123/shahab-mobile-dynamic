@@ -609,7 +609,7 @@ const products = [
         brand: "Realme",
         price: 39300,
         description: "Reliable daily driver with a large display and smooth performance.",
-        images: ["./images/logo.png"],
+        images: ["./images/realme-note-70.jpg"],
         specs: { ram: "6GB", storage: "128GB", battery: "5000 mAh" },
         stock: 12,
         freeDelivery: true
@@ -620,7 +620,7 @@ const products = [
         brand: "Oppo",
         price: 63850,
         description: "Sleek design with high-capacity storage for all your media needs.",
-        images: ["./images/logo.png"],
+        images: ["./images/oppo-a6.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 8,
         freeDelivery: true
@@ -631,7 +631,7 @@ const products = [
         brand: "Oppo",
         price: 112000,
         description: "Fashion-forward smartphone with high-end camera capabilities.",
-        images: ["./images/logo.png"],
+        images: ["./images/oppo-reno-15f.jpeg"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 5,
         freeDelivery: true
@@ -642,7 +642,7 @@ const products = [
         brand: "Vivo",
         price: 128500,
         description: "Flagship experience in a Fan Edition. High performance 5G device.",
-        images: ["./images/logo.png"],
+        images: ["./images/vivo-v70-fe.png"],
         specs: { ram: "12GB", storage: "256GB", battery: "5000 mAh" },
         stock: 6,
         freeDelivery: true
@@ -653,7 +653,7 @@ const products = [
         brand: "Vivo",
         price: 41000,
         description: "Great value entry-level phone with impressive battery and storage.",
-        images: ["./images/logo.png"],
+        images: ["./images/vivo-y05.png"],
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 15,
         freeDelivery: true
@@ -664,7 +664,7 @@ const products = [
         brand: "ZTE",
         price: 33400,
         description: "Premium features at a fraction of the cost. A true budget disruptor.",
-        images: ["./images/logo.png"],
+        images: ["./images/zte-v60.webp"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 12,
         freeDelivery: true
@@ -675,7 +675,7 @@ const products = [
         brand: "Digit",
         price: 18850,
         description: "Simple, effective, and built to last. Perfect for basic smartphone needs.",
-        images: ["./images/logo.png"],
+        images: ["./images/digit-6.jpg"],
         specs: { ram: "3GB", storage: "32GB", battery: "3000 mAh" },
         stock: 20,
         freeDelivery: false
@@ -699,7 +699,7 @@ const products = [
         brand: "Infinix",
         price: 36750,
         description: "The latest generation of the Smart series. Reliable and stylish.",
-        images: ["./images/logo.png"],
+        images: ["./images/infinix-smart-20.jpg"],
         specs: { ram: "4GB", storage: "128GB", battery: "5000 mAh" },
         stock: 14,
         installment: true,
@@ -724,7 +724,7 @@ const products = [
         brand: "Samsung",
         price: 120500,
         description: "Reliable 5G performance with premium build quality.",
-        images: ["./images/logo.png"],
+        images: ["./images/samsung-a56-5g.avif"],
         specs: { ram: "8GB", storage: "256GB", battery: "5000 mAh" },
         stock: 8,
         freeDelivery: true

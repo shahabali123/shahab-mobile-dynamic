@@ -95,16 +95,18 @@ function createProductCardHtml(product, isInstallmentsPage = false) {
             : `<button onclick="addToCart(${product.id})" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>`;
 
         return `
-        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" 
-             onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)">
+        <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000"
+             onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)"
+             onclick="window.location.href='product.html?id=${product.id}'">
             <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
                 ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
                 ${product.installment ? '<span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>' : ''}
                 ${product.installmentText ? `<span class="bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.installmentText}</span>` : ''}
             </div>
-            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden cursor-pointer" onclick="window.location.href='product.html?id=${product.id}'">
-                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500">
+            <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden loading-image-container">
+                <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500" onload="this.parentElement.classList.add('loaded');">
             </div>
             <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
             <h3 class="font-bold text-slate-800 mb-2 truncate cursor-pointer hover:text-blue-600" title="${product.name}" onclick="window.location.href='product.html?id=${product.id}'">${product.name}</h3>
@@ -455,17 +457,27 @@ function showDetails(id) {
     const brandBadge = document.getElementById('modal-brand-badge');
     brandBadge.innerHTML = `<span class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">${p.brand}</span>`;
 
+    // Main image with loader
     const mainImg = document.getElementById('modal-main-image');
-    mainImg.innerHTML = `<img src="${p.images[0]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()">`;
+    mainImg.innerHTML = `
+        <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+        <img src="${p.images[0]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
+    `;
+    mainImg.classList.remove('loaded'); // Ensure loader is visible for new image
 
+    // Thumbnails with loaders
     const thumbnails = document.getElementById('modal-thumbnails');
     thumbnails.innerHTML = p.images.map((img, idx) => `
-        <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl border border-slate-100 flex-shrink-0 cursor-pointer overflow-hidden p-2 bg-white hover:border-blue-600 transition" onclick="updateMainImage(${idx})">
-            <img src="${img}" class="w-full h-full object-contain">
+        <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl border border-slate-100 flex-shrink-0 cursor-pointer overflow-hidden p-2 bg-white hover:border-blue-600 transition loading-image-container" onclick="updateMainImage(${idx})">
+            <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+            <img src="${img}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
         </div>
     `).join('');
 
     const specs = document.getElementById('modal-specs');
+    // Ensure modal-specs is cleared before adding new content
+    specs.innerHTML = '';
+
     specs.innerHTML = `
         <div class="bg-slate-50 p-3 rounded-xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">RAM</p><p class="text-sm font-bold text-slate-700">${p.specs.ram}</p></div>
         <div class="bg-slate-50 p-3 rounded-xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Storage</p><p class="text-sm font-bold text-slate-700">${p.specs.storage}</p></div>
@@ -574,13 +586,15 @@ function initProductPage() {
     container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-2 w-full">
             <div class="bg-slate-50 p-8 md:p-16 flex flex-col gap-6 items-center">
-                <div class="aspect-square w-full max-w-md bg-white rounded-[3rem] shadow-inner border border-slate-100 flex items-center justify-center p-8">
-                    <img src="${p.images[0]}" class="max-w-full max-h-full object-contain">
+                <div class="aspect-square w-full max-w-md bg-white rounded-[3rem] shadow-inner border border-slate-100 flex items-center justify-center p-8 loading-image-container">
+                    <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+                    <img src="${p.images[0]}" class="max-w-full max-h-full object-contain" onload="this.parentElement.classList.add('loaded');">
                 </div>
                 <div class="flex gap-4 overflow-x-auto w-full justify-center">
                     ${p.images.map((img, idx) => `
-                        <div class="w-20 h-20 rounded-2xl bg-white border border-slate-100 p-2 flex-shrink-0">
-                            <img src="${img}" class="w-full h-full object-contain">
+                        <div class="w-20 h-20 rounded-2xl bg-white border border-slate-100 p-2 flex-shrink-0 loading-image-container">
+                            <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+                            <img src="${img}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
                         </div>
                     `).join('')}
                 </div>
@@ -675,8 +689,16 @@ function shareProduct(productId) {
 
 function updateMainImage(index) {
     lightboxIndex = index;
-    const mainImg = document.querySelector('#modal-main-image img');
-    if (mainImg) mainImg.src = lightboxImages[index];
+    const mainImgContainer = document.getElementById('modal-main-image');
+    if (!mainImgContainer) return;
+
+    // Clear previous content and add loader
+    mainImgContainer.innerHTML = `
+        <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
+        <img src="${lightboxImages[index]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
+    `;
+    mainImgContainer.classList.remove('loaded'); // Ensure loader is visible for new image
+
 }
 
 function openLightbox() {
@@ -684,7 +706,17 @@ function openLightbox() {
     const img = document.getElementById('lightbox-img');
     if (!modal || !img) return;
 
+    const lightboxContent = document.getElementById('lightbox-content');
+    if (!lightboxContent) return;
+
+    // Reset loader state
+    lightboxContent.classList.remove('loaded');
+    img.style.display = 'none'; // Hide image until loaded
+
     img.src = lightboxImages[lightboxIndex];
+    img.onload = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; };
+    img.onerror = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; }; // Show broken image icon on error
+
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     updateLightboxUI();
@@ -706,7 +738,20 @@ function closeLightbox() {
 function changeLightboxImage(dir) {
     if (lightboxImages.length <= 1) return;
     lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
-    document.getElementById('lightbox-img').src = lightboxImages[lightboxIndex];
+
+    const img = document.getElementById('lightbox-img');
+    const lightboxContent = document.getElementById('lightbox-content');
+
+    if (!img || !lightboxContent) return;
+
+    // Reset loader state
+    lightboxContent.classList.remove('loaded');
+    img.style.display = 'none'; // Hide image until loaded
+
+    img.src = lightboxImages[lightboxIndex];
+    img.onload = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; };
+    img.onerror = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; }; // Show broken image icon on error
+
     updateLightboxUI();
 }
 
