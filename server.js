@@ -19,6 +19,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// MongoDB Configuration Verification
+if (!process.env.MONGO_URI) {
+    console.error('❌ MONGO_URI missing in .env file!');
+    // process.exit(1); // Uncomment to stop server if critical env var is missing
+}
+
 // Cloudinary Configuration Verification
 if (!process.env.CLOUDINARY_API_KEY) {
     console.error('❌ Cloudinary keys missing in .env file!');
@@ -46,7 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session Configuration
 app.use(session({
-    secret: 'shahab_mobile_secure_key_123',
+    secret: process.env.SESSION_SECRET || 'shahab_mobile_secure_key_123', // Use env var, fallback for local dev
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days validity
@@ -105,7 +111,7 @@ app.use(async (req, res, next) => {
         next();
     } catch (err) {
         console.error("Settings Middleware Error:", err);
-        next();
+        next(err); // Pass the error to the next error handling middleware
     }
 });
 
