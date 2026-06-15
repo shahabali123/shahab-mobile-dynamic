@@ -27,13 +27,14 @@ if (!process.env.CLOUDINARY_API_KEY) {
 // 0. MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('✅ Connected to MongoDB Atlas');
-        console.log('📂 Active Database:', mongoose.connection.name);
-        app.listen(PORT, () => {
-            console.log(`🚀 Server active at: http://localhost:${PORT}`);
-        });
+        console.log('✅ Connected to MongoDB');
     })
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Local Development ke liye listen (Vercel isay ignore karega)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`🚀 Local Server: http://localhost:${PORT}`));
+}
 
 // Global Cloudinary Base URL helper for EJS (Using your cloud name: dl8elynnw)
 // Also pass cloud name to client-side for app.js
@@ -110,13 +111,16 @@ app.use(async (req, res, next) => {
 
 // 1. EJS View Engine Setup
 app.set('view engine', 'ejs');
-app.set('views', __dirname); // Views root folder mein hain
+app.set('views', path.join(__dirname, './')); // Ensure path resolution for Vercel
 
 // 2. Static Files Middleware
 app.use(express.static(path.join(__dirname, './')));
 
 // 3. Use Modular Routes
 app.use('/', productRoutes);
+
+// 4. Export for Vercel
+module.exports = app;
 
 // 4. 404 Error Handler (Keep this after all routes)
 app.use((req, res, next) => {
