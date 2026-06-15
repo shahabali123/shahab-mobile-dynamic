@@ -35,6 +35,9 @@ if (!process.env.CLOUDINARY_API_KEY) {
 // Disable Mongoose buffering: Agar connection nahi hai toh queries wait nahi karengi
 mongoose.set('bufferCommands', false);
 
+// Log the MONGO_URI to Vercel logs for verification (only first 50 chars for security)
+console.log('Attempting to connect to MongoDB with URI (first 50 chars):', process.env.MONGO_URI.substring(0, 50) + '...');
+
 // 0. MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000, // 5 seconds mein connect na ho toh fail karein
@@ -80,7 +83,7 @@ app.use(async (req, res, next) => {
         res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
         // Database checks (Only if connected)
-        if (mongoose.connection.readyState === 1 && SiteSetting.db.readyState === 1) {
+        if (mongoose.connection.readyState === 1) { // SiteSetting.db.readyState is redundant here
             // Track visits (upsert used to avoid crashes)
             const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
             if (!isAsset && req.method === 'GET') {
@@ -101,8 +104,16 @@ app.use(async (req, res, next) => {
             }
         } else {
             // Agar DB connect nahi hai toh routes ko query karne se rokna behtar hai
-            const dbErrorRoutes = ['/', '/offers', '/installments', '/admin', '/profile'];
-            if (dbErrorRoutes.includes(req.path) || req.path.startsWith('/product/')) {
+            const dbErrorRoutes = ['/', '/offers', '/installments', '/admin', '/profile', '/product']; // Added /product base
+            // Check if the current path starts with any of the critical routes
+            const isCriticalRoute = dbErrorRoutes.some(route => req.path.startsWith(route));
+
+            // Also check if MONGO_URI is actually present, as it might be empty on Vercel sometimes
+            if (!process.env.MONGO_URI || process.env.MONGO_URI.length < 10) { // Double check MONGO_URI here
+                const err = new Error("FATAL: MONGO_URI is missing or invalid during request. Check Vercel Environment Variables.");
+                err.status = 500;
+                return next(err);
+            } else if (isCriticalRoute) {
                 const err = new Error("Database connection is not ready yet. Please check MONGO_URI and Network Access (IP Whitelist).");
                 err.status = 500;
                 return next(err);
@@ -152,7 +163,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
         <div style="padding: 20px; font-family: sans-serif; line-height: 1.6;">
             <h1 style="color: #e11d48; margin-bottom: 10px;">Server Error (500)</h1>
             <p><strong>Message:</strong> ${err.message}</p>
-            <p><strong>Possible Cause:</strong> Agar ye 'Failed to lookup view' hai, toh check karein ke sab .ejs files root directory mein hain aur vercel.json sahi configured hai.</p>
+            <p><strong>Debugging Tip:</strong> Vercel dashboard par ja kar 'Logs' tab check karein. Wahan aapko is error ki mazeed tafseelat milengi.</p>
             <hr>
             <p style="font-size: 12px; color: #64748b;">Shahab Mobile Debugging Mode</p>
         </div>
