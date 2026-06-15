@@ -19,10 +19,12 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// MongoDB Configuration Verification
+// Critical Environment Variables Check
 if (!process.env.MONGO_URI) {
-    console.error('❌ MONGO_URI missing in .env file!');
-    // process.exit(1); // Uncomment to stop server if critical env var is missing
+    console.error('❌ FATAL ERROR: MONGO_URI is not defined in Environment Variables.');
+}
+if (!process.env.SESSION_SECRET) {
+    console.warn('⚠️ WARNING: SESSION_SECRET is not defined. Using default key.');
 }
 
 // Cloudinary Configuration Verification
@@ -31,11 +33,14 @@ if (!process.env.CLOUDINARY_API_KEY) {
 }
 
 // 0. MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000, // 5 seconds mein connect na ho toh fail karein
+    connectTimeoutMS: 10000,
+})
     .then(() => {
-        console.log('✅ Connected to MongoDB');
+        console.log('✅ Successfully connected to MongoDB Atlas');
     })
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+    .catch(err => console.error('❌ MongoDB Connection Error:', err.message));
 
 // Local Development ke liye listen (Vercel isay ignore karega)
 if (process.env.NODE_ENV !== 'production') {
@@ -95,7 +100,7 @@ app.use(async (req, res, next) => {
         
         next();
     } catch (err) {
-        console.error("⚠️ Settings Middleware Error (Non-critical):", err.message);
+        console.error("⚠️ Settings Middleware Error:", err.message);
         next(); // Move forward even if settings fail
     }
 });
@@ -115,7 +120,7 @@ module.exports = app;
 
 // 4. 404 Error Handler (Keep this after all routes)
 app.use((req, res, next) => {
-    res.status(404).render('index', { 
+    res.status(404).render('index', {
         products: [], 
         brands: [],
         selectedBrand: '',
@@ -127,7 +132,16 @@ app.use((req, res, next) => {
 });
 
 // 5. Global 500 Error Handler
-app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
-    console.error('🔥 Server Error:', err); // Log the full error object for more details
-    res.status(500).send('Kuch ghalat ho gaya hai! Hum jald theek kar lenge.');
+app.use((err, req, res, next) => {
+    console.error('🔥 Detailed Server Error:', err);
+    // Ab generic message ke bajaye asal error message screen par ayega
+    res.status(500).send(`
+        <div style="padding: 20px; font-family: sans-serif; line-height: 1.6;">
+            <h1 style="color: #e11d48;">Server Error (500)</h1>
+            <p><strong>Message:</strong> ${err.message}</p>
+            <p><strong>Note:</strong> Agar ye error 'MONGO_URI' ya 'buffering timed out' se mutalliq hai, toh check karein ke MongoDB Atlas mein Network Access (0.0.0.0/0) enabled hai ya nahi.</p>
+            <hr>
+            <p style="font-size: 12px; color: #64748b;">Shahab Mobile Debugging Mode</p>
+        </div>
+    `);
 });
