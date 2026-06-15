@@ -33,14 +33,16 @@ if (!process.env.CLOUDINARY_API_KEY) {
 }
 
 // Disable Mongoose buffering: Agar connection nahi hai toh queries wait nahi karengi
-mongoose.set('bufferCommands', false);
+// Vercel par isay false rakhna behtar hai taake timeout errors jaldi milain
+mongoose.set('bufferCommands', true); 
 
 // Log the MONGO_URI to Vercel logs for verification (only first 50 chars for security)
 console.log('Attempting to connect to MongoDB with URI (first 50 chars):', process.env.MONGO_URI.substring(0, 50) + '...');
 
 // 0. MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000, // 5 seconds mein connect na ho toh fail karein
+// Isay ek variable mein save kar letay hain taake middleware mein await kiya ja sakay
+let dbPromise = mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
     connectTimeoutMS: 10000,
 })
     .then(() => {
@@ -82,8 +84,14 @@ app.use(async (req, res, next) => {
         res.locals.customer = req.session.customer || null;
         res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
-        // Database checks (Only if connected)
-        if (mongoose.connection.readyState === 1) { // SiteSetting.db.readyState is redundant here
+        // Vercel Serverless Fix: Agar connection ready nahi hai, toh intezar karein
+        if (mongoose.connection.readyState !== 1) {
+            console.log('⏳ Database not ready, awaiting connection...');
+            await dbPromise;
+        }
+
+        // Check again after awaiting
+        if (mongoose.connection.readyState === 1) {
             // Track visits (upsert used to avoid crashes)
             const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
             if (!isAsset && req.method === 'GET') {
