@@ -37,14 +37,20 @@ exports.getHomePage = async (req, res, next) => {
             if (req.query.maxPrice) filter.price.$lte = parseInt(req.query.maxPrice);
         }
 
+        console.log('Home Page Filters:', filter);
+
         // Sorting Logic
         let sortQuery = { _id: -1 }; // Default: Newest
         if (req.query.sort === 'low') sortQuery = { price: 1 };
         if (req.query.sort === 'high') sortQuery = { price: -1 };
         if (req.query.sort === 'popular') sortQuery = { views: -1 };
 
+        console.log('Home Page Sort Query:', sortQuery);
+
         const totalProducts = await Product.countDocuments(filter);
+        console.log('Total Products matching filters:', totalProducts);
         const dbProducts = await Product.find(filter).sort(sortQuery).skip(skip).limit(limit);
+        console.log('Fetched Products for current page:', dbProducts.length);
         
         // Get dynamic filter values for the UI
         const brands = await Product.distinct('brand');

@@ -139,11 +139,11 @@ app.use(async (req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname)); // Absolute path lookup for Vercel
 
-// 2. Static Files Middleware
-app.use(express.static(path.resolve(__dirname)));
-
-// 3. Use Modular Routes
+// 2. Use Modular Routes (Pehle routes check honge)
 app.use('/', productRoutes);
+
+// 3. Static Files Middleware (Routes ke baad)
+app.use(express.static(path.resolve(__dirname)));
 
 // 4. Export for Vercel
 module.exports = app;
