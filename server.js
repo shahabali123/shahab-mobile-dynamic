@@ -61,57 +61,42 @@ app.use(session({
 // Global Settings Middleware
 app.use(async (req, res, next) => {
     try {
-        // Track visits (except admin and static files)
-        const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
-        if (!isAsset && req.method === 'GET') {
-            await SiteSetting.updateOne({ key: 'main' }, { $inc: { siteVisits: 1 } });
-        }
-
-        let settings = await SiteSetting.findOne({ key: 'main' });
-        if (!settings) {
-            settings = new SiteSetting({
-                key: 'main',
-                logo: 'logo', // Cloudinary public ID or URL
-                heroBadge: "Trusted in Mansehra",
-                heroBrandName: "SHAHAB MOBILE",
-                heroTitle: "Premium Devices. <br> Trusted Quality.",
-                heroDescription: "Mansehra's leading destination for original Phones, Samsung, and top brands.",
-                heroImage: "https://res.cloudinary.com/dl8elynnw/image/upload/f_auto,q_auto/logo",
-                heroWatermark: "SHAHAB",
-                heroPrimaryBtnText: "Explore Collection",
-                heroPrimaryBtnLink: "#product-grid",
-                heroSecondaryBtnText: "Latest Offers",
-                heroSecondaryBtnLink: "/offers",
-                heroInstallmentBtnText: "Easy Installments",
-                heroInstallmentBtnLink: "/installments",
-                // Default Installment Page Hero Text
-                instHeroBadge: "Easy Payments",
-                instHeroTitle: "Abhi Installment Pe Lein! 💳",
-                instHeroDescription: "Itel, Infinix, aur Tecno ke latest mobiles ab asaan mahana qiston par available hain. Sirf 20% advance payment dein aur apna pasandida mobile ghar le jayein, 9 mahine ki asaan iqsaat par.",
-                instHeroAdvanceText: "20% Advance Payment",
-                instHeroPlanSummary: "3, 6 & 9 Months Plans"
-            });
-            await settings.save();
-        }
-        res.locals.settings = settings;
+        // Fallback defaults in case DB is not ready
+        res.locals.settings = { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
+        res.locals.pendingOrdersCount = 0;
+        res.locals.pendingInquiriesCount = 0;
+        res.locals.unreadInquiriesCount = 0;
         res.locals.activePath = req.path;
         res.locals.admin = req.session.admin || null;
-        
-        // New Orders Notification logic (Count pending orders)
-        res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
-        res.locals.pendingInquiriesCount = await Inquiry.countDocuments({ status: 'Pending' });
-        
-        // Customer Notifications
-        res.locals.unreadInquiriesCount = req.session.customer 
-            ? await Inquiry.countDocuments({ userId: req.session.customer._id, isReadByCustomer: false })
-            : 0;
-
-        res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME; // Pass to EJS
         res.locals.customer = req.session.customer || null;
+        res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+
+        // Database checks (Only if connected)
+        if (mongoose.connection.readyState === 1) {
+            // Track visits (upsert used to avoid crashes)
+            const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
+            if (!isAsset && req.method === 'GET') {
+                await SiteSetting.updateOne({ key: 'main' }, { $inc: { siteVisits: 1 } }, { upsert: true });
+            }
+
+            let settings = await SiteSetting.findOne({ key: 'main' });
+            if (settings) res.locals.settings = settings;
+            
+            res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
+            res.locals.pendingInquiriesCount = await Inquiry.countDocuments({ status: 'Pending' });
+            
+            if (req.session.customer) {
+                res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ 
+                    userId: req.session.customer._id, 
+                    isReadByCustomer: false 
+                });
+            }
+        }
+        
         next();
     } catch (err) {
-        console.error("Settings Middleware Error:", err);
-        next(err); // Pass the error to the next error handling middleware
+        console.error("⚠️ Settings Middleware Error (Non-critical):", err.message);
+        next(); // Move forward even if settings fail
     }
 });
 
@@ -142,7 +127,7 @@ app.use((req, res, next) => {
 });
 
 // 5. Global 500 Error Handler
-app.use((err, req, res, next) => {
-    console.error('🔥 Server Error:', err.stack);
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    console.error('🔥 Server Error:', err); // Log the full error object for more details
     res.status(500).send('Kuch ghalat ho gaya hai! Hum jald theek kar lenge.');
 });
