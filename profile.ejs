@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col">
+    <%- include('nav') %>
+
+    <main class="flex-grow container mx-auto px-4 py-12 max-w-6xl">
+        <div class="flex flex-col md:flex-row gap-8 relative">
+            <!-- Left: Profile Info -->
+            <div class="w-full md:w-1/3 bg-white rounded-[2.5rem] p-6 md:p-8 shadow-xl border border-slate-100 md:sticky md:top-24 self-start">
+                <div class="text-center mb-8">
+                    <div class="w-24 h-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-5xl font-black mx-auto mb-4">
+                        <%= customer.fullName.charAt(0).toUpperCase() %>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-900"><%= customer.fullName %></h2>
+                    <p class="text-slate-500 text-sm"><%= customer.email %></p>
+                </div>
+
+                <div class="space-y-4 text-slate-600">
+                    <p class="flex items-center gap-3"><i class="fas fa-phone w-5 text-blue-600"></i> <%= customer.phone || 'N/A' %></p>
+                    <p class="flex items-start gap-3"><i class="fas fa-map-marker-alt w-5 text-blue-600 mt-1"></i> <%= customer.address || 'N/A' %></p>
+                </div>
+
+                <div class="mt-10 border-t border-slate-100 pt-6">
+                    <a href="/logout-customer" class="w-full bg-red-500 text-white py-4 rounded-2xl font-bold hover:bg-red-600 transition flex items-center justify-center gap-3">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Order History -->
+            <div class="flex-grow bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    <button id="orders-tab" class="py-3 px-4 md:px-6 text-sm font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition-all active-tab">Order History</button>
+                    <button id="chats-tab" class="py-3 px-4 md:px-6 text-sm font-bold text-slate-500 hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 transition-all">My Chats</button>
+                </div>
+
+                <!-- Order History Content -->
+                <div id="orders-content" class="tab-content">
+                    <h3 class="text-3xl font-black text-slate-900 mb-8">My Order History</h3>
+
+                    <% if (orders.length > 0) { %>
+                        <div class="space-y-6">
+                            <% orders.forEach(order => { %>
+                                <% 
+                                    let statusBg = 'bg-blue-100 text-blue-600';
+                                    if(order.status === 'Shipped') statusBg = 'bg-green-100 text-green-600';
+                                    else if(order.status === 'Pending') statusBg = 'bg-orange-100 text-orange-600';
+                                    else if(order.status === 'Cancelled') statusBg = 'bg-red-100 text-red-600';
+                                    else if(order.status === 'Packed') statusBg = 'bg-cyan-100 text-cyan-600';
+                                    else if(order.status === 'Ready for Delivery') statusBg = 'bg-indigo-100 text-indigo-600';
+                                %>
+                                <div class="bg-white rounded-[2rem] p-5 md:p-6 shadow-sm border border-slate-200">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-xs font-black bg-blue-50 text-blue-600 px-3 py-1 rounded-full"><%= order.orderId %></span>
+                                            <span class="text-slate-400 text-xs"><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                                        </div>
+                                        <span class="text-[10px] md:text-sm font-bold px-3 py-1 rounded-full <%= statusBg %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="space-y-3 mb-4 border-b border-slate-100 pb-4">
+                                        <% order.items.forEach(item => { %>
+                                            <div class="flex items-center gap-4">
+                                                <img src="<%= item.image %>" class="w-12 h-12 object-contain rounded-lg bg-slate-50 p-1">
+                                                <div class="flex-grow">
+                                                    <p class="font-bold text-sm text-slate-800"><%= item.name %></p>
+                                                    <p class="text-blue-600 font-black text-xs">Rs. <%= item.price.toLocaleString() %> x <%= item.quantity %></p>
+                                                </div>
+                                                <span class="font-black text-slate-900">Rs. <%= (item.price * item.quantity).toLocaleString() %></span>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-black">Total</span>
+                                        <span class="text-2xl font-black text-blue-600">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                                    </div>
+                                    <div class="mt-4 flex justify-end gap-4">
+                                        <a href="/chat?subject=Delivery Inquiry: Order #<%= order.orderId %>" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-xl font-bold text-xs hover:bg-slate-200 transition flex items-center gap-2">
+                                            <i class="fas fa-comment-dots text-blue-600"></i> Inquire Delivery
+                                        </a>
+                                        <a href="/track-order/<%= order.orderId %>" class="text-blue-600 font-bold text-sm hover:underline">Track Order</a>
+                                    </div>
+                                    <% if (order.status === 'Pending' || order.status === 'Packed' || order.status === 'Ready for Delivery') { %>
+                                        <div class="mt-4 flex justify-end">
+                                            <button onclick="cancelOrder('<%= order.orderId %>')" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-red-600 transition flex items-center gap-2">
+                                                <i class="fas fa-times-circle"></i> Order Cancel Karein
+                                            </button>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } else { %>
+                        <div class="bg-white rounded-[2rem] p-20 text-center border-2 border-dashed border-slate-200">
+                            <i class="fas fa-box-open text-5xl text-slate-200 mb-4"></i>
+                            <p class="text-slate-400 font-bold">Abhi tak koi order nahi kiya.</p>
+                            <a href="/" class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Shop Now</a>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- My Chats Content -->
+                <div id="chats-content" class="tab-content hidden">
+                    <h3 class="text-3xl font-black text-slate-900 mb-8">My Support Chats</h3>
+                    <div class="bg-white rounded-[2rem] p-6 text-center border-2 border-dashed border-slate-200">
+                        <i class="fas fa-comments text-5xl text-slate-200 mb-4"></i>
+                        <p class="text-slate-400 font-bold">Apni saari chats yahan dekhein.</p>
+                        <a href="/chat" class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition">Go to Chat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/app.js"></script>
+    <%- include('footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ordersTab = document.getElementById('orders-tab');
+            const chatsTab = document.getElementById('chats-tab');
+            const ordersContent = document.getElementById('orders-content');
+            const chatsContent = document.getElementById('chats-content');
+
+            function showTab(tabName) {
+                ordersTab.classList.remove('active-tab', 'text-blue-600', 'border-blue-600');
+                chatsTab.classList.remove('active-tab', 'text-blue-600', 'border-blue-600');
+                ordersContent.classList.add('hidden');
+                chatsContent.classList.add('hidden');
+
+                if (tabName === 'orders') {
+                    ordersTab.classList.add('active-tab', 'text-blue-600', 'border-blue-600');
+                    ordersContent.classList.remove('hidden');
+                } else if (tabName === 'chats') {
+                    chatsTab.classList.add('active-tab', 'text-blue-600', 'border-blue-600');
+                    chatsContent.classList.remove('hidden');
+                }
+            }
+
+            ordersTab.addEventListener('click', () => showTab('orders'));
+            chatsTab.addEventListener('click', () => showTab('chats'));
+
+            // Show default tab or tab from URL hash
+            const hash = window.location.hash.substring(1);
+            if (hash === 'chats') {
+                showTab('chats');
+            } else {
+                showTab('orders');
+            }
+        });
+
+        async function cancelOrder(orderId) {
+            if (!confirm('Kya aap waqai yeh order cancel karna chahte hain? Yeh action wapas nahi liya ja sakta.')) return;
+            
+            try {
+                const response = await fetch(`/profile/order/cancel/${orderId}`, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' } 
+                });
+
+                if (response.status === 401) {
+                    alert("Aap ka session khatam ho chuka hai. Dubara login karein.");
+                    window.location.href = '/login-customer';
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (typeof showToast === 'function') {
+                        showToast(data.message, "info");
+                    } else {
+                        alert(data.message);
+                    }
+                    // Page reload karein taake list update ho jaye
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    if (typeof showToast === 'function') {
+                        showToast(data.message, "error");
+                    } else {
+                        alert(data.message);
+                    }
+                }
+            } catch (err) {
+                console.error('Cancellation error:', err);
+                alert("Server se rabta nahi ho saka. Dobara koshish karein.");
+            }
+        }
+    </script>
+</body>
+</html>

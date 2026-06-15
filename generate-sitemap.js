@@ -1,50 +1,53 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
+const Product = require('./Product');
 
-// Path to your products.js file
-const productsPath = path.join(__dirname, 'products.js');
-// Path where sitemap.xml will be generated
-const sitemapPath = path.join(__dirname, 'sitemap.xml');
+async function generateSitemap() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        // Fetch all product IDs from MongoDB
+        const products = await Product.find({}, 'id');
+        
+        const sitemapPath = path.join(__dirname, 'sitemap.xml');
+        const baseUrl = 'https://shahabmobile.com/'; // Live domain
 
-// Dynamically load products.js to get the 'products' array
-const productsContent = fs.readFileSync(productsPath, 'utf8');
-let products = [];
-// Execute the content of products.js in a temporary context
-// This assumes products.js defines a global 'products' array.
-eval(productsContent + '\n products = products;');
-
-if (!Array.isArray(products)) {
-    console.error('Error: Could not load products array from products.js. Ensure products.js defines a global "products" array.');
-    process.exit(1);
-}
-
-const baseUrl = 'https://shahabmobile.netlify.app/'; // Apni website ka base URL yahan set karein
-
-let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+        let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${baseUrl}</loc>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>${baseUrl}offers.html</loc>
+    <loc>${baseUrl}offers</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>${baseUrl}installments.html</loc>
+    <loc>${baseUrl}installments</loc>
     <priority>0.8</priority>
   </url>
 `;
 
-products.forEach(product => {
-    sitemapXml += `  <url>
-    <loc>${baseUrl}product.html?id=${product.id}</loc>
+        products.forEach(product => {
+            sitemapXml += `  <url>
+    <loc>${baseUrl}product/${product.id}</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <priority>0.7</priority>
   </url>
 `;
-});
+        });
 
-sitemapXml += `</urlset>`;
+        sitemapXml += `</urlset>`;
 
-fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
-console.log('sitemap.xml generated successfully with all product links!');
+        fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
+        console.log('✅ sitemap.xml generated successfully!');
+    } catch (err) {
+        console.error('❌ Sitemap Error:', err);
+    } finally {
+        await mongoose.disconnect();
+    }
+}
+
+generateSitemap();

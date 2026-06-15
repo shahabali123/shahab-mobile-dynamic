@@ -1,0 +1,32 @@
+<footer class="bg-slate-900 text-white pt-16 pb-8 mt-20">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="col-span-1 md:col-span-1">
+            <div class="flex items-center gap-2 mb-6">
+                <% 
+                   let footerLogoUrl = settings.logo.startsWith('http') ? settings.logo : cloudinaryBase + settings.logo;
+                %>
+                <img src="<%= footerLogoUrl %>" alt="Logo" class="w-10 h-10 object-contain">
+                <h2 class="text-xl font-bold uppercase tracking-wider">Shahab Mobile</h2>
+            </div>
+            <p class="text-slate-400 leading-relaxed mb-6">Apki pasandida mobile shop jahan apko milte hain original products aur behtreen qeemat.</p>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-6">Quick Links</h3>
+            <ul class="space-y-4 text-slate-400">
+                <li><a href="/" class="hover:text-white transition">Home</a></li>
+                <li><a href="/offers" class="hover:text-white transition">Latest Offers</a></li>
+                <li><a href="/installments" class="hover:text-white transition">Installment Plans</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-6">Contact Us</h3>
+            <ul class="space-y-4 text-slate-400">
+                <li class="flex items-center gap-3"><i class="fas fa-phone text-blue-500"></i> +92 342 0475187</li>
+                <li class="flex items-center gap-3"><i class="fas fa-envelope text-blue-500"></i> shahab.mughal.180@gmail.com</li>
+            </ul>
+        </div>
+    </div>
+    <div class="container mx-auto px-6 border-t border-slate-800 mt-16 pt-8 text-center text-slate-500 text-sm">
+        <p>&copy; 2024 Shahab Mobile. All Rights Reserved.</p>
+    </div>
+</footer>

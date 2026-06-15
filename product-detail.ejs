@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head', { 
+        metaDesc: `Buy ${product.name} at the best price in Pakistan. Features: ${product.specs.ram} RAM, ${product.specs.storage} Storage. Official warranty at Shahab Mobile Mansehra.`,
+        ogImage: product.images[0]
+    }) %>
+    
+    <!-- Product Structured Data (PriceOye Style) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "<%= product.name %>",
+      "image": "<%= product.images[0] %>",
+      "description": "<%= product.description %>",
+      "brand": {
+        "@type": "Brand",
+        "name": "<%= product.brand %>"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://shahabmobile.com/product/<%= product.id %>",
+        "priceCurrency": "PKR",
+        "price": "<%= product.price %>",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      }
+    }
+    </script>
+</head>
+<body class="bg-[#f8fafc] text-slate-900">
+
+    <%- include('nav') %>
+
+    <main class="container mx-auto px-4 py-12" id="product-page-content">
+        
+        <!-- SEO Breadcrumbs -->
+        <nav class="flex text-slate-400 text-xs font-bold uppercase tracking-widest mb-8 gap-2 items-center">
+            <a href="/" class="hover:text-blue-600">Home</a>
+            <i class="fas fa-chevron-right text-[8px]"></i>
+            <a href="/?brand=<%= product.brand %>" class="hover:text-blue-600"><%= product.brand %></a>
+            <i class="fas fa-chevron-right text-[8px]"></i>
+            <span class="text-slate-900"><%= product.name %></span>
+        </nav>
+
+        <div class="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <!-- Left: Product Images -->
+                <div class="bg-slate-50 p-8 md:p-16 flex flex-col gap-6 items-center">
+                    <div class="aspect-square w-full max-w-md bg-white rounded-[3rem] shadow-inner border border-slate-100 flex items-center justify-center p-8">
+                        <% 
+                           let mainImg = (product.images && product.images[0]) ? product.images[0] : '';
+                           if (mainImg.includes('cloudinary.com')) {
+                               mainImg = mainImg.replace('/upload/', '/upload/c_limit,w_800,q_auto,f_auto/');
+                           }
+                        %>
+                        <img src="<%= mainImg %>" class="max-w-full max-h-full object-contain" alt="<%= product.name %>" id="main-view-img">
+                    </div>
+                    <div class="flex gap-4 overflow-x-auto w-full justify-center">
+                        <% product.images.forEach((img, index) => { %>
+                            <div class="w-20 h-20 rounded-2xl bg-white border border-slate-100 p-2 flex-shrink-0 cursor-pointer hover:border-blue-500 transition" onclick="document.getElementById('main-view-img').src='<%= img %>'">
+                                <img src="<%= img %>" class="w-full h-full object-contain">
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <!-- Right: Product Info -->
+                <div class="p-8 md:p-16 flex flex-col justify-center">
+                    <span class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 w-fit"><%= product.brand %></span>
+                    <h2 class="text-4xl md:text-5xl font-black mb-4 text-slate-900"><%= product.name %></h2>
+                    <p class="text-3xl font-bold text-blue-600 mb-8">Rs. <%= product.price.toLocaleString() %></p>
+                    
+                    <!-- Specs Grid -->
+                    <div class="grid grid-cols-3 gap-4 mb-8">
+                        <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">RAM</p><p class="font-bold"><%= product.specs.ram %></p></div>
+                        <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Storage</p><p class="font-bold"><%= product.specs.storage %></p></div>
+                        <div class="bg-slate-50 p-4 rounded-2xl text-center"><p class="text-[10px] text-slate-400 font-bold uppercase">Battery</p><p class="font-bold"><%= product.specs.battery %></p></div>
+                    </div>
+
+                    <p class="text-slate-600 leading-relaxed mb-10 text-lg"><%= product.description %></p>
+
+                    <!-- Installment Info (Only if enabled for this product) -->
+                    <% if (product.installment) { 
+                        let downPayment = Math.round(product.price * (installmentConfig.advancePercentage / 100));
+                        let remaining = product.price - downPayment;
+                    %>
+                        <div class="mb-8 p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
+                            <h4 class="font-bold text-blue-900 mb-4 flex items-center gap-2"><i class="fas fa-calculator"></i> Installment Plan</h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div class="bg-white p-3 rounded-xl shadow-sm"><p class="text-[10px] text-slate-400">Advance</p><p class="font-bold text-sm">Rs. <%= downPayment.toLocaleString() %></p></div>
+                                <% installmentConfig.plans.forEach(plan => { 
+                                    let perMonth = Math.round((remaining * (1 + plan.markup / 100)) / plan.months);
+                                %>
+                                    <div class="bg-white p-3 rounded-xl shadow-sm"><p class="text-[10px] text-slate-400"><%= plan.months %> Mo</p><p class="font-bold text-sm text-blue-600">Rs. <%= perMonth.toLocaleString() %></p></div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="addToCart(<%= product.id %>)" class="flex-grow bg-blue-600 text-white py-5 rounded-2xl font-bold text-lg hover:bg-blue-700 transition shadow-xl shadow-blue-100">
+                            <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+                        </button>
+                        <button onclick="shareProduct(<%= product.id %>)" class="bg-slate-100 text-slate-600 px-8 py-5 rounded-2xl font-bold hover:bg-slate-200 transition">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <section class="mt-20">
+            <h3 class="text-2xl font-black mb-8 text-center">You Might Also Like</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <% relatedProducts.forEach(related => { %>
+                    <%- include('card', { product: related }) %>
+                <% }); %>
+            </div>
+        </section>
+    </main>
+
+    <%- include('footer') %>
+
+    <script>
+        // Inject current product and related products into client-side list
+        window.products = [<%- JSON.stringify(product) %>, ...<%- JSON.stringify(relatedProducts) %>];
+    </script>
+    <script src="/app.js"></script>
+</body>
+</html>

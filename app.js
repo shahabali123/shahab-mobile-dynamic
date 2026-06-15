@@ -1,10 +1,30 @@
 // State Management
+window.products = window.products || []; // Ensure products array exists
 let cart = JSON.parse(localStorage.getItem('shahab_cart')) || [];
 let compareList = JSON.parse(localStorage.getItem('shahab_compare')) || [];
 let currentPage = 1;
 let lightboxImages = [];
 let lightboxIndex = 0;
 const itemsPerPage = 8;
+
+// Helper function to format Cloudinary URLs
+function formatImageUrl(url) {
+    if (!url) return 'https://placehold.co/400x400?text=No+Image';
+    
+    // Agar URL pehle se hi Cloudinary ka full link hai
+    if (url.startsWith('http')) {
+        // Agar transformations (f_auto, q_auto) missing hain toh inject karein
+        if (url.includes('cloudinary.com') && !url.includes('f_auto')) {
+            return url.replace('/upload/', '/upload/f_auto,q_auto/');
+        }
+        return url;
+    }
+
+    // Agar local path hai (./images/...) toh usay remove karein
+    const cleanPath = url.replace(/^\.\/|images\//g, '');
+    // Cloudinary Base URL (Aapka cloud name: dl8elynnw)
+    return `https://res.cloudinary.com/${window.CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto/${cleanPath}`;
+}
 
 // Helper function for haptic feedback (Vibration)
 function triggerVibration(duration = 20) {
@@ -28,12 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCompareUI();
     initScrollReveal();
     
-    // Only render grid if we are on index/offers/installments (main product listing pages)
     if (document.getElementById('product-grid')) {
-        renderProducts(true, false);
+        observeElements();
         hideLoadingScreen();
-    } else if (document.getElementById('product-page-content')) {
-        initProductPage();
+    }
+
+    if (document.getElementById('product-page-content')) {
+        // initProductPage logic is now handled by EJS server-side
+        observeElements();
         hideLoadingScreen();
     }
 
@@ -80,6 +102,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Escape') closeLightbox();
         }
     });
+    // Notification for Reply
+    if (window.unreadInquiriesCount > 0 && window.location.pathname.includes('profile') === false) {
+        setTimeout(() => {
+            // Create and show a custom popup if Toast system is too small
+            const notification = document.createElement('div');
+            notification.className = "fixed top-20 right-4 z-[200] bg-blue-600 text-white p-5 rounded-2xl shadow-2xl animate-bounce flex items-center gap-4 cursor-pointer border-4 border-blue-400";
+            notification.innerHTML = `
+                <div class="bg-white text-blue-600 w-10 h-10 rounded-full flex items-center justify-center"><i class="fas fa-comment-dots"></i></div>
+                <div><p class="font-black text-xs uppercase">New Message</p><p class="text-sm font-bold">Shahab Mobile has replied to your inquiry!</p></div>
+            `;
+            notification.onclick = () => window.location.href = '/chat';
+            document.body.appendChild(notification);
+
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+            audio.play().catch(() => {});
+        }, 1000);
+    }
 });
 
 /**
@@ -97,7 +136,7 @@ function createProductCardHtml(product, isInstallmentsPage = false) {
         return `
         <div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000"
              onmousemove="handle3DTilt(event, this)" onmouseleave="reset3DTilt(this)"
-             onclick="window.location.href='product.html?id=${product.id}'">
+             onclick="window.location.href='/product/${product.id}'">
             <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
                 ${product.badge ? `<span class="${product.badge.color} text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${product.badge.text}</span>` : ''}
                 ${product.freeDelivery ? '<span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>' : ''}
@@ -106,10 +145,10 @@ function createProductCardHtml(product, isInstallmentsPage = false) {
             </div>
             <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden loading-image-container">
                 <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-                <img src="${product.images[0]}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500" onload="this.parentElement.classList.add('loaded');">
+                <img src="${formatImageUrl(product.images[0])}" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500" onload="this.parentElement.classList.add('loaded');">
             </div>
             <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1">${product.brand}</p>
-            <h3 class="font-bold text-slate-800 mb-2 truncate cursor-pointer hover:text-blue-600" title="${product.name}" onclick="window.location.href='product.html?id=${product.id}'">${product.name}</h3>
+            <h3 class="font-bold text-slate-800 mb-2 truncate cursor-pointer hover:text-blue-600" title="${product.name}" onclick="window.location.href='/product/${product.id}'">${product.name}</h3>
             <div class="flex justify-between items-center mb-4">
                 <p class="text-xl font-extrabold text-slate-900">Rs. ${product.price.toLocaleString()}</p>
             </div>
@@ -130,7 +169,7 @@ function renderProducts(resetPage = false, shouldScroll = false) {
     const grid = document.getElementById('product-grid');
     if (!grid) return;
 
-    let filtered = [...products];
+    let filtered = [...window.products];
     
     // Apply Navbar Search Filter
     const searchInp = document.getElementById('searchBar') || document.getElementById('searchBarMobile');
@@ -287,13 +326,13 @@ function openCompareModal() {
         showToast("Please select 2 products to compare");
         return;
     }
-    const p1 = products.find(p => p.id === compareList[0]);
-    const p2 = products.find(p => p.id === compareList[1]);
+    const p1 = window.products.find(p => p.id === compareList[0]);
+    const p2 = window.products.find(p => p.id === compareList[1]);
     
     const content = document.getElementById('compare-content');
     const createSlot = (p) => `
         <div class="bg-slate-50 p-3 md:p-6 rounded-2xl md:rounded-3xl border border-slate-100 flex flex-col items-center text-center">
-            <img src="${p.images[0]}" class="w-20 h-20 md:w-32 md:h-32 object-contain mb-3 md:mb-4 rounded-xl">
+            <img src="${formatImageUrl(p.images[0])}" class="w-20 h-20 md:w-32 md:h-32 object-contain mb-3 md:mb-4 rounded-xl">
             <h4 class="font-bold text-xs md:text-lg mb-1 md:mb-2 text-slate-800 line-clamp-2 min-h-[2.5rem]">${p.name}</h4>
             <p class="text-sm md:text-2xl font-black text-blue-600 mb-4 md:mb-6">Rs. ${p.price.toLocaleString()}</p>
             <div class="w-full space-y-2 md:space-y-3">
@@ -324,7 +363,12 @@ function clearCompareList() {
 function addToCart(id) {
     triggerVibration(40); // Slightly stronger vibration for adding to cart
 
-    const product = products.find(p => p.id === id);
+    const product = window.products.find(p => p.id === id);
+    if (!product) {
+        console.error("Product data not found for ID:", id);
+        return;
+    }
+
     const existing = cart.find(item => item.id === id);
     if (existing) {
         existing.quantity += 1;
@@ -344,7 +388,14 @@ function updateCartCount() {
 
 function toggleCart() {
     const sidebar = document.getElementById('cart-sidebar');
+    const overlay = document.getElementById('cart-overlay');
+    if (!sidebar) return;
+
     sidebar.classList.toggle('translate-x-full');
+    overlay?.classList.toggle('hidden');
+
+    const isOpening = !sidebar.classList.contains('translate-x-full');
+    document.body.style.overflow = isOpening ? 'hidden' : 'auto';
 }
 
 function renderCart() {
@@ -357,7 +408,7 @@ function renderCart() {
         total += item.price * item.quantity;
         return `
             <div class="flex gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                <img src="${item.images[0]}" class="w-16 h-16 object-contain">
+                <img src="${formatImageUrl(item.images[0])}" class="w-16 h-16 object-contain">
                 <div class="flex-grow">
                     <h4 class="font-bold text-sm">${item.name}</h4>
                     <p class="text-blue-600 font-bold text-sm">Rs. ${item.price.toLocaleString()}</p>
@@ -383,29 +434,20 @@ function changeQty(id, delta) {
     updateCartCount();
 }
 
-function checkoutWhatsApp() {
+async function checkoutWhatsApp() {
     triggerVibration(30);
-
     if (cart.length === 0) return alert("Cart is empty");
-    let text = "Hello Shahab Mobile, I want to order:\n\n";
-    cart.forEach(item => text += `• ${item.name} x ${item.quantity} (Rs. ${(item.price * item.quantity).toLocaleString()})\n`);
-    text += `\nTotal: Rs. ${document.getElementById('cart-total').innerText}`;
-    window.open(`https://wa.me/923420475187?text=${encodeURIComponent(text)}`);
+
+    // Redirect to a checkout page instead of direct WhatsApp
+    window.location.href = '/checkout';
 }
 
 function inquireInstallment(id) {
-    triggerVibration(30);
-
-    const p = products.find(product => product.id === id);
+    const p = window.products.find(product => product.id === id);
     if (!p) return;
-
-    const config = typeof installmentConfig !== 'undefined' ? installmentConfig : { advancePercentage: 20, plans: [] };
-    const downPayment = Math.round(p.price * (config.advancePercentage / 100));
-    const options = config.plans.map(pl => pl.months).join(', ') + " Months";
     
-    const msg = `Asalam-o-Alaikum Shahab Mobile! Mujhay is product ki installments ki details chahiye:\n\nDevice: ${p.name}\nTotal Price: Rs. ${p.price.toLocaleString()}\nAdvance Payment (${config.advancePercentage}%): Rs. ${downPayment.toLocaleString()}\nPlan options: ${options}`;
-    
-    window.open(`https://wa.me/923420475187?text=${encodeURIComponent(msg)}`);
+    // Redirect to contact page with pre-filled subject
+    window.location.href = `/contact?subject=Installment Inquiry: ${p.name}`;
 }
 
 // Search Logic
@@ -418,15 +460,15 @@ function handleSearch(e) {
         return;
     }
 
-    const matched = products.filter(p => 
+    const matched = window.products.filter(p => 
         p.name.toLowerCase().includes(query) || 
         p.brand.toLowerCase().includes(query)
     ).slice(0, 5);
 
     if (matched.length > 0) {
         suggestions.innerHTML = matched.map(p => `
-            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-50 last:border-0" onclick="window.location.href='product.html?id=${p.id}'">
-                <img src="${p.images[0]}" class="w-12 h-12 object-contain rounded-lg">
+            <div class="flex items-center gap-4 p-4 hover:bg-slate-50 cursor-pointer transition border-b border-slate-50 last:border-0" onclick="window.location.href='/product/${p.id}'">
+                <img src="${formatImageUrl(p.images[0])}" class="w-12 h-12 object-contain rounded-lg">
                 <div>
                     <p class="font-bold text-slate-800 text-sm">${p.name}</p>
                     <p class="text-blue-600 font-bold text-xs">Rs. ${p.price.toLocaleString()}</p>
@@ -442,7 +484,7 @@ function handleSearch(e) {
 
 // Product Details Logic
 function showDetails(id) {
-    const p = products.find(product => product.id === id);
+    const p = window.products.find(product => product.id === id);
     if (!p) return;
 
     triggerVibration(20); // Subtle vibration for opening details
@@ -461,7 +503,7 @@ function showDetails(id) {
     const mainImg = document.getElementById('modal-main-image');
     mainImg.innerHTML = `
         <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-        <img src="${p.images[0]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
+        <img src="${formatImageUrl(p.images[0])}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
     `;
     mainImg.classList.remove('loaded'); // Ensure loader is visible for new image
 
@@ -470,7 +512,7 @@ function showDetails(id) {
     thumbnails.innerHTML = p.images.map((img, idx) => `
         <div class="w-16 h-16 md:w-20 md:h-20 rounded-xl border border-slate-100 flex-shrink-0 cursor-pointer overflow-hidden p-2 bg-white hover:border-blue-600 transition loading-image-container" onclick="updateMainImage(${idx})">
             <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-            <img src="${img}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
+            <img src="${formatImageUrl(img)}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
         </div>
     `).join('');
 
@@ -557,7 +599,7 @@ function initProductPage() {
     
     if (!container) return;
     
-    const p = products.find(product => product.id === productId);
+    const p = window.products.find(product => product.id === productId);
     
     if (!p) {
         container.innerHTML = `
@@ -619,13 +661,13 @@ function initProductPage() {
             <div class="bg-slate-50 p-8 md:p-16 flex flex-col gap-6 items-center">
                 <div class="aspect-square w-full max-w-md bg-white rounded-[3rem] shadow-inner border border-slate-100 flex items-center justify-center p-8 loading-image-container">
                     <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-                    <img src="${p.images[0]}" class="max-w-full max-h-full object-contain" onload="this.parentElement.classList.add('loaded');">
+                    <img src="${formatImageUrl(p.images[0])}" class="max-w-full max-h-full object-contain" onload="this.parentElement.classList.add('loaded');">
                 </div>
                 <div class="flex gap-4 overflow-x-auto w-full justify-center">
                     ${p.images.map((img, idx) => `
                         <div class="w-20 h-20 rounded-2xl bg-white border border-slate-100 p-2 flex-shrink-0 loading-image-container">
                             <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-                            <img src="${img}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
+                            <img src="${formatImageUrl(img)}" class="w-full h-full object-contain" onload="this.parentElement.classList.add('loaded');">
                         </div>
                     `).join('')}
                 </div>
@@ -670,7 +712,7 @@ function initProductPage() {
     // Render Related Products
     const relatedProductsGrid = document.getElementById('related-products-grid');
     if (relatedProductsGrid) {
-        const relatedProducts = products.filter(item => 
+        const relatedProducts = window.products.filter(item => 
             item.id !== p.id && // Exclude the current product
             item.specs.ram === p.specs.ram && 
             item.specs.storage === p.specs.storage
@@ -696,7 +738,7 @@ function initProductPage() {
 }
 
 function shareProduct(productId) {
-    const p = products.find(product => product.id == productId);
+    const p = window.products.find(product => product.id == productId);
     if (!p) {
         showToast("Product not found for sharing.", "error");
         return;
@@ -726,7 +768,7 @@ function updateMainImage(index) {
     // Clear previous content and add loader
     mainImgContainer.innerHTML = `
         <div class="image-loader"><i class="fas fa-spinner fa-spin"></i><span>Loading...</span></div>
-        <img src="${lightboxImages[index]}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
+        <img src="${formatImageUrl(lightboxImages[index])}" class="w-4/5 h-4/5 object-contain cursor-zoom-in" onclick="openLightbox()" onload="this.parentElement.classList.add('loaded');">
     `;
     mainImgContainer.classList.remove('loaded'); // Ensure loader is visible for new image
 
@@ -744,7 +786,7 @@ function openLightbox() {
     lightboxContent.classList.remove('loaded');
     img.style.display = 'none'; // Hide image until loaded
 
-    img.src = lightboxImages[lightboxIndex];
+    img.src = formatImageUrl(lightboxImages[lightboxIndex]);
     img.onload = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; };
     img.onerror = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; }; // Show broken image icon on error
 
@@ -779,7 +821,7 @@ function changeLightboxImage(dir) {
     lightboxContent.classList.remove('loaded');
     img.style.display = 'none'; // Hide image until loaded
 
-    img.src = lightboxImages[lightboxIndex];
+    img.src = formatImageUrl(lightboxImages[lightboxIndex]);
     img.onload = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; };
     img.onerror = () => { lightboxContent.classList.add('loaded'); img.style.display = 'block'; }; // Show broken image icon on error
 
@@ -867,11 +909,20 @@ function showToast(msg, type = "cart") {
     msgEl.innerText = msg;
     toast.classList.remove('hidden');
 
-    if (type === "cart") {
+    // Reset classes
+    toast.className = "fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] flex flex-col items-center gap-4 animate-in slide-in-from-bottom-10 duration-500";
+    const innerBox = toast.querySelector('div') || toast; // Assuming there's a wrapper
+    
+    if (type === "error") {
+        toast.querySelector('.bg-slate-900')?.classList.replace('bg-slate-900', 'bg-red-600');
+        actionBtn.classList.add('hidden');
+    } else if (type === "cart") {
+        toast.querySelector('.bg-red-600')?.classList.replace('bg-red-600', 'bg-slate-900');
         actionBtn.innerText = "Go to Cart →";
         actionBtn.onclick = () => { toggleCart(); hideToast(); };
         actionBtn.classList.remove('hidden');
     } else if (type === "compare" && compareList.length === 2) {
+        toast.querySelector('.bg-red-600')?.classList.replace('bg-red-600', 'bg-slate-900');
         actionBtn.innerText = "Compare Now →";
         actionBtn.onclick = () => { openCompareModal(); hideToast(); };
         actionBtn.classList.remove('hidden');

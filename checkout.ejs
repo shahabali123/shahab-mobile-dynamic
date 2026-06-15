@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <%- include('nav') %>
+
+    <main class="container mx-auto px-4 py-12 max-w-6xl">
+        <div class="flex flex-col lg:flex-row gap-12">
+            <!-- Left: Order Form -->
+            <div class="flex-grow">
+                <div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-slate-100">
+                    <h2 class="text-3xl font-black mb-10 flex items-center gap-4">
+                        <span class="bg-blue-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center text-sm">1</span>
+                        Delivery Information
+                    </h2>
+
+                    <form id="orderForm" class="space-y-6">
+                        <% if (customer && customer.address && customer.phone) { %>
+                            <!-- VIP Summary for Registered User -->
+                            <div class="bg-blue-50 border-2 border-blue-100 p-8 rounded-[2.5rem] mb-8 relative overflow-hidden group">
+                                <div class="relative z-10">
+                                    <h4 class="text-blue-900 font-black uppercase text-[10px] tracking-[0.2em] mb-4 flex items-center gap-2">
+                                        <i class="fas fa-truck-loading"></i> Delivering to your address
+                                    </h4>
+                                    <div class="space-y-1">
+                                        <p class="text-2xl font-black text-slate-900"><%= customer.fullName %></p>
+                                        <p class="text-slate-600 font-bold"><i class="fab fa-whatsapp text-green-500 mr-1"></i> <%= customer.phone %></p>
+                                        <p class="text-slate-500 leading-relaxed max-w-md mt-2"><%= customer.address %></p>
+                                    </div>
+                                    <a href="/profile" class="mt-6 inline-block text-blue-600 font-bold text-xs hover:underline italic transition-all group-hover:translate-x-1">
+                                        Change address in profile? →
+                                    </a>
+                                </div>
+                                <i class="fas fa-shipping-fast absolute -right-6 -bottom-6 text-9xl text-blue-600/5 -rotate-12 group-hover:rotate-0 transition-transform duration-700"></i>
+                                
+                                <!-- Hidden inputs to satisfy the existing JS logic -->
+                                <input type="hidden" id="customerName" value="<%= customer.fullName %>">
+                                <input type="hidden" id="customerPhone" value="<%= customer.phone %>">
+                                <input type="hidden" id="customerAddress" value="<%= customer.address %>">
+                            </div>
+                        <% } else { %>
+                            <!-- Default Form for Guests or incomplete profiles -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-2">Full Name</label>
+                                    <input type="text" id="customerName" required placeholder="Shahab Mughal" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-2">WhatsApp Number</label>
+                                    <input type="tel" id="customerPhone" required placeholder="0342 0475187" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-2">Full Delivery Address</label>
+                                <textarea id="customerAddress" required rows="3" placeholder="Shop #12, Shinkiari Road, Mansehra" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition-all"></textarea>
+                            </div>
+                        <% } %>
+
+                        <button type="submit" id="submitBtn" class="w-full bg-slate-900 text-white py-6 rounded-3xl font-black text-xl hover:bg-slate-800 transition shadow-2xl flex items-center justify-center gap-3">
+                            CONFIRM ORDER <i class="fas fa-check-circle"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="w-full lg:w-96">
+                <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100 sticky top-24">
+                    <h3 class="text-xl font-black mb-6">Order Summary</h3>
+                    <div id="checkout-items" class="space-y-4 mb-8 max-h-[300px] overflow-y-auto custom-scrollbar">
+                        <!-- Loaded via JS -->
+                    </div>
+                    <div class="pt-6 border-t border-slate-100">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-slate-400 font-bold">Subtotal</span>
+                            <span class="font-bold">Rs. <span id="summary-subtotal">0</span></span>
+                        </div>
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-slate-400 font-bold">Delivery</span>
+                            <span class="text-green-500 font-bold uppercase text-xs">Free</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-black">Total</span>
+                            <span class="text-2xl font-black text-blue-600">Rs. <span id="summary-total">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('footer') %>
+
+    <script src="/app.js"></script>
+    <script>
+        // Load cart summary on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemsContainer = document.getElementById('checkout-items');
+            if (!cart || cart.length === 0) {
+                window.location.href = '/';
+                return;
+            }
+
+            let total = 0;
+            itemsContainer.innerHTML = cart.map(item => {
+                total += item.price * item.quantity;
+                return `
+                    <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-2xl">
+                        <img src="${item.images[0]}" class="w-12 h-12 object-contain rounded-lg">
+                        <div class="flex-grow">
+                            <p class="font-bold text-xs truncate w-32">${item.name}</p>
+                            <p class="text-blue-600 font-black text-[10px]">x${item.quantity} - Rs. ${(item.price * item.quantity).toLocaleString()}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('summary-subtotal').innerText = total.toLocaleString();
+            document.getElementById('summary-total').innerText = total.toLocaleString();
+        });
+
+        // Handle Form Submission
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+
+            const orderData = {
+                customerName: document.getElementById('customerName').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerAddress: document.getElementById('customerAddress').value,
+                cartData: JSON.stringify(cart.map(i => ({ productId: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.images[0] })))
+            };
+
+            try {
+                const response = await fetch('/place-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    localStorage.removeItem('shahab_cart');
+                    window.location.href = `/track-order/${result.orderId}`;
+                }
+            } catch (err) {
+                alert("Order placement failed. Please try again.");
+                btn.disabled = false;
+                btn.innerText = 'CONFIRM ORDER';
+            }
+        });
+    </script>
+</body>
+</html>

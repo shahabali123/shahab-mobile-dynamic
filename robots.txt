@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
-Sitemap: https://shahabmobile.netlify.app/sitemap.xml
+Disallow: /admin/
+Disallow: /login
+Disallow: /logout
+
+Sitemap: https://shahabmobile.com/sitemap.xml

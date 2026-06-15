@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %> | Admin</title>
+    <%- include('head') %>
+</head>
+<body class="bg-slate-100 min-h-screen flex">
+
+    <%- include('admin-nav') %>
+
+    <div class="flex-grow p-4 md:p-10 md:ml-64">
+        <div class="max-w-4xl mx-auto">
+        <a href="/admin" class="inline-flex items-center gap-2 text-slate-500 font-bold mb-8 hover:text-slate-800">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl">
+            <h2 class="text-3xl font-black mb-10"><%= product ? 'Edit Mobile' : 'Add New Mobile' %></h2>
+
+            <form action="<%= product ? '/admin/edit/' + product.id : '/admin/add' %>" method="POST" enctype="multipart/form-data" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Device Name</label>
+                        <input type="text" name="name" value="<%= product ? product.name : '' %>" required class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Select Brand</label>
+                        <div class="space-y-4">
+                            <select name="brand" id="brandSelect" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none">
+                                <option value="">-- Choose Brand --</option>
+                                <% brands.forEach(b => { %>
+                                    <option value="<%= b %>" <%= product && product.brand === b ? 'selected' : '' %>><%= b %></option>
+                                <% }) %>
+                                <option value="other" class="text-blue-600 font-bold">+ Add New Brand</option>
+                            </select>
+                            <input type="text" name="newBrand" id="newBrandInput" placeholder="Enter new brand name" class="hidden w-full bg-blue-50 border border-blue-200 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Price (PKR)</label>
+                        <input type="number" name="price" value="<%= product ? product.price : '' %>" required class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Images (Max 5)</label>
+                        <input type="file" name="images" multiple <%= product ? '' : 'required' %> class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">RAM</label>
+                        <input type="text" name="ram" value="<%= product ? product.specs.ram : '' %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Storage</label>
+                        <input type="text" name="storage" value="<%= product ? product.specs.storage : '' %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Battery</label>
+                        <input type="text" name="battery" value="<%= product ? product.specs.battery : '' %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Description</label>
+                    <textarea name="description" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl"><%= product ? product.description : '' %></textarea>
+                </div>
+
+                <div class="flex gap-8">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="freeDelivery" <%= product && product.freeDelivery ? 'checked' : '' %> class="w-6 h-6 rounded-lg text-blue-600">
+                        <span class="font-bold text-slate-700">Free Delivery</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="installment" <%= product && product.installment ? 'checked' : '' %> class="w-6 h-6 rounded-lg text-blue-600">
+                        <span class="font-bold text-slate-700">Available on Qist</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-slate-900 text-white py-6 rounded-3xl font-black text-xl hover:bg-slate-800 transition shadow-2xl">
+                    <%= product ? 'SAVE CHANGES' : 'PUBLISH MOBILE' %>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('brandSelect').addEventListener('change', function() {
+            const newBrandInput = document.getElementById('newBrandInput');
+            if (this.value === 'other') {
+                newBrandInput.classList.remove('hidden');
+                newBrandInput.setAttribute('required', 'true');
+            } else {
+                newBrandInput.classList.add('hidden');
+                newBrandInput.removeAttribute('required');
+            }
+        });
+    </script>
+</body>
+</html>

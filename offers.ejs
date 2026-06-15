@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+</head>
+<body class="bg-[#f8fafc] text-slate-900">
+
+    <%- include('nav') %>
+
+    <div class="container mx-auto px-6 py-12">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div class="text-center md:text-left">
+                <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-4">Hot Offers & Deals 🔥</h2>
+                <p class="text-slate-500 max-w-2xl">Humari exclusive offers aur muft delivery walay behtreen mobiles yahan dekhein.</p>
+            </div>
+            
+            <!-- Brand Filter -->
+            <form action="/offers" method="GET" class="w-full md:w-64">
+                <select name="brand" onchange="this.form.submit()" class="w-full bg-white border border-slate-200 p-3 rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700">
+                    <option value="">All Brands</option>
+                    <% brands.forEach(b => { %>
+                        <option value="<%= b %>" <%= selectedBrand === b ? 'selected' : '' %>><%= b %></option>
+                    <% }) %>
+                </select>
+            </form>
+        </div>
+        
+        <main class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-grid">
+            <% products.forEach(function(product) { %>
+                <%- include('card', { product: product }) %>
+            <% }); %>
+        </main>
+
+        <%- include('pagination') %>
+    </div>
+
+    <%- include('footer') %>
+
+    <script src="/app.js"></script>
+</body>
+</html>

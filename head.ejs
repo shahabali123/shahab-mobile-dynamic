@@ -1,0 +1,66 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Dynamic SEO Meta Tags -->
+<meta name="description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : settings.heroDescription %>">
+<meta name="keywords" content="Mobile prices in Pakistan, Shahab Mobile Mansehra, Samsung prices, iPhone on installments, <%= typeof product !== 'undefined' ? product.name + ' price' : '' %>">
+<meta name="author" content="Shahab Mobile">
+<link rel="canonical" href="https://shahabmobile.com<%= activePath %>">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shahabmobile.com<%= activePath %>">
+<meta property="og:title" content="<%= typeof title !== 'undefined' ? title : 'Shahab Mobile' %>">
+<meta property="og:description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : settings.heroDescription %>">
+<meta property="og:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://res.cloudinary.com/dl8elynnw/image/upload/f_auto,q_auto/logo' %>">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://shahabmobile.com<%= activePath %>">
+<meta property="twitter:title" content="<%= typeof title !== 'undefined' ? title : 'Shahab Mobile' %>">
+<meta property="twitter:description" content="<%= typeof metaDesc !== 'undefined' ? metaDesc : settings.heroDescription %>">
+<meta property="twitter:image" content="<%= typeof ogImage !== 'undefined' ? ogImage : 'https://res.cloudinary.com/dl8elynnw/image/upload/f_auto,q_auto/logo' %>">
+
+<link rel="manifest" href="/manifest.json">
+<% 
+   let favIconUrl = settings.logo.startsWith('http') ? settings.logo : cloudinaryBase + settings.logo;
+%>
+<link rel="icon" href="<%= favIconUrl %>" type="image/png">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+    .product-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    /* 3D Effects */
+    .perspective-1000 { perspective: 1000px; }
+    .reveal-item { 
+        opacity: 0; 
+        transform: translateY(30px) rotateX(10deg); 
+        transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .reveal-active { 
+        opacity: 1; 
+        transform: translateY(0) rotateX(0); 
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(3deg); }
+        50% { transform: translateY(-20px) rotate(-3deg); }
+    }
+    .animate-float-3d { animation: float 6s ease-in-out infinite; }
+
+    .loader-ring {
+        width: 80px; height: 80px; border-radius: 50%;
+        border: 4px solid #f1f5f9; border-top: 4px solid #2563eb;
+        animation: spin-loader 1s linear infinite;
+    }
+    @keyframes spin-loader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>

@@ -5,7 +5,7 @@ const heroConfig = {
     brandName: "SHAHAB MOBILE",
     title: "Premium Devices. <br> Trusted Quality.",
     description: "Mansehra's leading destination for original Phones, Samsung, and top brands. Official warranty and easy installments on Shinkiari Road.",
-    image: "./images/logo.png",
+    image: "https://res.cloudinary.com/dl8elynnw/image/upload/f_auto,q_auto/logo",
     primaryBtn: { text: "Explore Collection", link: "#product-grid" },
     secondaryBtn: { text: "Latest Offers", link: "offers.html" }, 
     installmentBtn: { text: "Easy Installments", link: "installments.html" }, // Added new button for Installments
@@ -23,7 +23,7 @@ function renderHero() {
                     <div class="w-12 h-[1px] bg-indigo-500/50 hidden md:block"></div>
                     <span class="text-indigo-400 text-xs font-black uppercase tracking-[0.5em] drop-shadow-[0_0_10px_rgba(129,140,248,0.5)]">${heroConfig.brandName}</span>
                 </div>
-                <h2 class="text-5xl md:text-6xl lg:text-8xl font-black mb-8 leading-[1.05] tracking-tight">
+                <h2 class="text-4xl md:text-6xl lg:text-8xl font-black mb-8 leading-[1.05] tracking-tight">
                     Premium <br>
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-300">${heroConfig.brandName}</span>
                 </h2>

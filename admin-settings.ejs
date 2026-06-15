@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+</head>
+<body class="bg-slate-100 min-h-screen flex">
+
+    <%- include('admin-nav') %>
+
+    <div class="flex-grow p-4 md:p-10 md:ml-64">
+        <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <a href="/admin" class="inline-flex items-center gap-2 text-slate-500 font-bold hover:text-slate-800">
+                <i class="fas fa-arrow-left"></i> Back to Inventory
+            </a>
+            <h2 class="text-2xl font-black">SITE CONFIGURATION</h2>
+        </div>
+
+        <form action="/admin/settings" method="POST" enctype="multipart/form-data" class="space-y-8">
+            <!-- Logo & Brand -->
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+                <h3 class="text-lg font-bold mb-6 text-blue-600">Identity & Logo</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Website Logo</label>
+                        <input type="file" name="logo" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Brand Name (Hero)</label>
+                        <input type="text" name="heroBrandName" value="<%= settings.heroBrandName %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Content -->
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+                <h3 class="text-lg font-bold mb-6 text-blue-600">Hero Section Content</h3>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Hero Title (HTML Allowed)</label>
+                        <input type="text" name="heroTitle" value="<%= settings.heroTitle %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Hero Description</label>
+                        <textarea name="heroDescription" rows="3" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl"><%= settings.heroDescription %></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Hero Featured Image</label>
+                            <input type="file" name="heroImage" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Background Watermark</label>
+                            <input type="text" name="heroWatermark" value="<%= settings.heroWatermark %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Installments Page Banner Settings -->
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+                <h3 class="text-lg font-bold mb-6 text-green-600">Installments Page Hero (Promotion)</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Badge Text</label>
+                            <input type="text" name="instHeroBadge" value="<%= settings.instHeroBadge %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Banner Title</label>
+                            <input type="text" name="instHeroTitle" value="<%= settings.instHeroTitle %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Banner Description</label>
+                        <textarea name="instHeroDescription" rows="3" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl"><%= settings.instHeroDescription %></textarea>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Advance Policy Text</label>
+                            <input type="text" name="instHeroAdvanceText" value="<%= settings.instHeroAdvanceText %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Plan Summary Text</label>
+                            <input type="text" name="instHeroPlanSummary" value="<%= settings.instHeroPlanSummary %>" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons & Links -->
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-slate-100">
+                <h3 class="text-lg font-bold mb-6 text-blue-600">Action Buttons</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <input type="text" name="heroPrimaryBtnText" value="<%= settings.heroPrimaryBtnText %>" placeholder="Primary Button Text" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        <input type="text" name="heroPrimaryBtnLink" value="<%= settings.heroPrimaryBtnLink %>" placeholder="Primary Link" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div class="space-y-4">
+                        <input type="text" name="heroSecondaryBtnText" value="<%= settings.heroSecondaryBtnText %>" placeholder="Secondary Button Text" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        <input type="text" name="heroSecondaryBtnLink" value="<%= settings.heroSecondaryBtnLink %>" placeholder="Secondary Link" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                    <div class="space-y-4">
+                        <input type="text" name="heroInstallmentBtnText" value="<%= settings.heroInstallmentBtnText %>" placeholder="Installment Button Text" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                        <input type="text" name="heroInstallmentBtnLink" value="<%= settings.heroInstallmentBtnLink %>" placeholder="Installment Link" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-6 rounded-3xl font-black text-xl hover:bg-blue-700 transition shadow-2xl">
+                SAVE SITE CONFIGURATION
+            </button>
+        </form>
+    </div>
+</body>
+</html>

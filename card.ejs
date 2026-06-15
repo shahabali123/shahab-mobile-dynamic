@@ -1,0 +1,36 @@
+<div class="product-card reveal-item bg-white rounded-3xl p-5 border border-slate-100 group relative perspective-1000" onclick="window.location.href='/product/<%= product.id %>'">
+    <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+        <% if (product.badge) { %>
+            <span class="<%= product.badge.color %> text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg"><%= product.badge.text %></span>
+        <% } %>
+        <% if (product.freeDelivery) { %>
+            <span class="bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg shadow-green-100">FREE DELIVERY</span>
+        <% } %>
+        <% if (product.installment) { %>
+            <span class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1"><i class="fas fa-calendar-alt text-[8px]"></i> Installment</span>
+        <% } %>
+    </div>
+    <div class="aspect-square bg-slate-50 rounded-2xl mb-5 flex items-center justify-center overflow-hidden">
+        <% 
+           let optimizedImg = (product.images && product.images[0]) ? product.images[0] : '';
+           if (optimizedImg.includes('cloudinary.com')) {
+               optimizedImg = optimizedImg.replace('/upload/', '/upload/c_limit,w_400,q_auto,f_auto/');
+           }
+        %>
+        <img src="<%= optimizedImg %>" class="w-4/5 h-4/5 object-contain group-hover:scale-110 transition duration-500" alt="<%= product.name %>" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+    </div>
+    <p class="text-blue-600 font-bold text-[10px] tracking-widest uppercase mb-1"><%= product.brand %></p>
+    <h3 class="font-bold text-slate-800 mb-2 truncate" title="<%= product.name %>"><%= product.name %></h3>
+    <div class="flex justify-between items-center mb-4">
+        <p class="text-xl font-extrabold text-slate-900">Rs. <%= product.price.toLocaleString() %></p>
+    </div>
+    <div class="flex gap-2 relative z-20">
+        <% if (typeof isInstallmentPage !== 'undefined' && isInstallmentPage) { %>
+            <button onclick="event.stopPropagation(); inquireInstallment(<%= product.id %>)" class="flex-grow bg-slate-900 text-white py-3 rounded-xl font-bold text-[10px] hover:bg-slate-800 transition shadow-lg flex items-center justify-center gap-1">
+                <i class="fas fa-hand-holding-usd text-blue-400"></i> Inquire Plan
+            </button>
+        <% } else { %>
+            <button onclick="event.stopPropagation(); addToCart(<%= product.id %>)" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-100">Add to Cart</button>
+        <% } %>
+    </div>
+</div>

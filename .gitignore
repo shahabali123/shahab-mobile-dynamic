@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Environment variables (Secrets - NEVER UPLOAD THESE)
+/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Generated files
+sitemap.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db

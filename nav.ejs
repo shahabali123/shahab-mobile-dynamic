@@ -1,0 +1,95 @@
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-50 py-3 transition-all duration-300 hover:shadow-md">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="flex flex-wrap lg:flex-nowrap justify-between items-center gap-y-3">
+            <div class="flex items-center gap-3 group cursor-pointer shrink-0" onclick="window.location.href='/'">
+                <% 
+                   let logoUrl = settings.logo.startsWith('http') ? settings.logo : cloudinaryBase + settings.logo;
+                %>
+                <img src="<%= logoUrl %>" alt="Shahab Mobile Logo" class="w-12 h-12 object-contain group-hover:rotate-12 transition-transform">
+                <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">SHAHAB<span class="text-blue-600">MOBILE</span></h1>
+            </div>
+
+            <div class="relative w-full lg:max-w-md mx-0 lg:mx-4 group order-3 lg:order-none">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchBar" onkeyup="handleSearch(event)" placeholder="Search devices..." class="w-full bg-slate-50 border border-slate-200 pl-12 pr-20 py-2.5 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                <div id="search-suggestions" class="absolute top-full left-0 right-0 bg-white mt-2 rounded-2xl shadow-2xl border border-slate-100 hidden z-[100] max-h-[400px] overflow-y-auto"></div>
+            </div>
+
+            <div class="flex gap-2 md:gap-4 items-center shrink-0">
+                <div class="hidden md:flex gap-6 mr-4 font-semibold text-slate-600">
+                    <a href="/" class="<%= activePath === '/' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600 transition' %>">Home</a>
+                    <a href="/offers" class="<%= activePath === '/offers' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600 transition' %>">Offers</a>
+                    <a href="/installments" class="<%= activePath === '/installments' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600 transition' %>">Installments</a>
+                    <% if (admin) { %>
+                        <a href="/admin" class="<%= activePath.startsWith('/admin') ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600 transition' %>">Admin</a>
+                    <% } %>
+                    <% if (customer) { %>
+                        <a href="/profile" class="relative <%= activePath === '/profile' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600 transition' %>">
+                            My Account
+                            <% if (unreadInquiriesCount > 0) { %>
+                                <span class="absolute -top-1 -right-2 w-2 h-2 bg-red-600 rounded-full animate-ping"></span>
+                            <% } %>
+                        </a>
+                    <% } else if (!admin) { %>
+                        <a href="/login-customer" class="hover:text-blue-600 transition">Login</a>
+                    <% } %>
+                </div>
+                
+                <button onclick="toggleCart()" class="relative p-2 hover:bg-slate-100 rounded-full transition">
+                    <i class="fas fa-shopping-bag text-xl text-slate-700"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 hover:bg-slate-100 rounded-full transition text-slate-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div id="menu-overlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[90] hidden md:hidden"></div>
+
+<!-- Mobile Navigation Menu -->
+<div id="mobile-menu" class="fixed top-4 right-4 bottom-4 w-[280px] bg-white z-[100] translate-x-[120%] transition-transform duration-500 md:hidden flex flex-col shadow-2xl rounded-3xl border border-slate-100">
+    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h2 class="text-xl font-bold flex items-center gap-3"><i class="fas fa-bars text-blue-600"></i> Menu</h2>
+        <button onclick="toggleMobileMenu()" class="text-3xl font-light text-slate-400">&times;</button>
+    </div>
+    <div class="flex flex-col p-6 gap-6 text-lg font-bold text-slate-600">
+        <a href="/" class="flex items-center gap-4 p-3 rounded-2xl transition <%= activePath === '/' ? 'text-blue-600 bg-blue-50/50 font-black' : 'hover:text-blue-600' %>"><i class="fas fa-home w-6"></i> Home</a>
+        <a href="/offers" class="flex items-center gap-4 p-3 rounded-2xl transition <%= activePath === '/offers' ? 'text-blue-600 bg-blue-50/50 font-black' : 'hover:text-blue-600' %>"><i class="fas fa-tags w-6"></i> Latest Offers</a>
+        <a href="/installments" class="flex items-center gap-4 p-3 rounded-2xl transition <%= activePath === '/installments' ? 'text-blue-600 bg-blue-50/50 font-black' : 'hover:text-blue-600' %>"><i class="fas fa-calendar-alt w-6"></i> Installment Plans</a>
+        <% if (admin) { %>
+            <a href="/admin" class="flex items-center gap-4 p-3 rounded-2xl transition <%= activePath.startsWith('/admin') ? 'text-blue-600 bg-blue-50/50 font-black' : 'hover:text-blue-600' %>">
+                <i class="fas fa-user-shield w-6"></i> Admin Dashboard
+            </a>
+        <% } %>
+    </div>
+</div>
+
+<!-- Cart Sidebar -->
+<div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[400px] bg-white z-[110] translate-x-full transition-transform duration-500 shadow-2xl flex flex-col">
+    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <h2 class="text-xl font-black flex items-center gap-3"><i class="fas fa-shopping-cart text-blue-600"></i> My Cart</h2>
+        <button onclick="toggleCart()" class="text-3xl font-light text-slate-400">&times;</button>
+    </div>
+    
+    <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar">
+        <!-- Items will be injected by app.js -->
+    </div>
+
+    <div class="p-6 border-t border-slate-100 bg-slate-50 rounded-t-[2.5rem]">
+        <div class="flex justify-between items-center mb-6">
+            <span class="text-slate-500 font-bold">Total Bill</span>
+            <span class="text-2xl font-black text-slate-900">Rs. <span id="cart-total">0</span></span>
+        </div>
+        <button onclick="checkoutWhatsApp()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg hover:bg-blue-700 transition shadow-xl shadow-blue-100 flex items-center justify-center gap-3">
+            <i class="fas fa-check-circle"></i> Proceed to Checkout
+        </button>
+    </div>
+</div>
+
+<!-- Cart Overlay -->
+<div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[105] hidden"></div>

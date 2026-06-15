@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+            .invoice-box { border: none; shadow: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 md:p-10 font-sans">
+    <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-slate-200 invoice-box">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-slate-100 pb-8">
+            <div>
+                <h1 class="text-4xl font-black italic tracking-tighter text-slate-900">SHAHAB <span class="text-blue-600">MOBILE</span></h1>
+                <p class="text-slate-500 text-sm mt-1">Shinkiari Road, Mansehra, Pakistan</p>
+                <p class="text-slate-500 text-sm">Phone: +92 342 0475187</p>
+            </div>
+            <div class="text-right">
+                <h2 class="text-2xl font-black text-slate-800 uppercase">Invoice</h2>
+                <p class="text-blue-600 font-bold">#<%= order.orderId %></p>
+                <p class="text-slate-400 text-xs mt-1"><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></p>
+            </div>
+        </div>
+
+        <!-- Customer Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-slate-50 p-6 rounded-2xl">
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Bill To:</h3>
+                <p class="font-black text-slate-800 text-lg"><%= order.customerName %></p>
+                <p class="text-slate-600 text-sm mt-2"><%= order.customerAddress %></p>
+                <p class="text-slate-600 text-sm"><%= order.customerPhone %></p>
+            </div>
+            <div class="flex flex-col justify-end text-right">
+                <p class="text-slate-400 text-sm">Status</p>
+                <p class="text-lg font-black <%= order.status === 'Cancelled' ? 'text-red-600' : 'text-green-600' %> uppercase tracking-tight"><%= order.status %></p>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="w-full mb-12">
+            <thead>
+                <tr class="text-left border-b-2 border-slate-100">
+                    <th class="py-4 text-xs font-bold text-slate-400 uppercase">Product</th>
+                    <th class="py-4 text-xs font-bold text-slate-400 uppercase text-center">Qty</th>
+                    <th class="py-4 text-xs font-bold text-slate-400 uppercase text-right">Price</th>
+                    <th class="py-4 text-xs font-bold text-slate-400 uppercase text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                <% order.items.forEach(item => { %>
+                    <tr>
+                        <td class="py-6 font-bold text-slate-800"><%= item.name %></td>
+                        <td class="py-6 text-center font-bold text-slate-600">x<%= item.quantity %></td>
+                        <td class="py-6 text-right font-medium text-slate-600">Rs. <%= item.price.toLocaleString() %></td>
+                        <td class="py-6 text-right font-black text-slate-900">Rs. <%= (item.price * item.quantity).toLocaleString() %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="flex justify-end">
+            <div class="w-full md:w-64 space-y-4">
+                <div class="flex justify-between items-center text-slate-400">
+                    <span class="text-sm font-bold uppercase">Subtotal</span>
+                    <span class="font-bold">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                </div>
+                <div class="flex justify-between items-center text-slate-400">
+                    <span class="text-sm font-bold uppercase">Shipping</span>
+                    <span class="font-bold">FREE</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-slate-100 pt-4">
+                    <span class="text-lg font-black text-slate-800 uppercase">Grand Total</span>
+                    <span class="text-2xl font-black text-blue-600">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Message -->
+        <div class="mt-20 text-center border-t border-slate-50 pt-8 text-slate-400 text-xs">
+            <p>Shukriya Shahab Mobile se kharidari karne ka!</p>
+            <p class="mt-1">Computer generated invoice. No signature required.</p>
+        </div>
+    </div>
+
+    <div class="fixed bottom-10 right-10 flex gap-4 no-print">
+        <button onclick="window.print()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black shadow-2xl hover:bg-blue-700 transition flex items-center gap-2">
+            <i class="fas fa-print"></i> PRINT INVOICE
+        </button>
+        <button onclick="window.close();" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black shadow-2xl hover:bg-slate-800 transition">CLOSE</button>
+    </div>
+
+    <script>
+        // Automatically trigger print dialog
+        window.onload = () => {
+            setTimeout(() => { window.print(); }, 1000);
+        };
+    </script>
+</body>
+</html>

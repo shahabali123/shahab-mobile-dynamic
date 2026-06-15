@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+    <style>
+        .status-line { height: 2px; width: 100%; background: #e2e8f0; position: absolute; top: 24px; left: 0; z-index: 0; }
+        .status-line-fill { height: 2px; background: #2563eb; position: absolute; top: 24px; left: 0; z-index: 1; transition: width 1s ease; }
+        
+        /* VIP Print Styles */
+        @media print {
+            nav, footer, .no-print, #cart-sidebar, #cart-overlay, #menu-overlay, #mobile-menu { display: none !important; }
+            body { background: white !important; padding: 0 !important; margin: 0 !important; }
+            .main-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; border-radius: 0 !important; padding: 1rem !important; }
+            .status-tracker { display: none !important; }
+            .print-header { display: flex !important; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 2rem; }
+            .print-footer { display: block !important; text-align: center; margin-top: 2rem; font-size: 10px; color: #94a3b8; }
+            .check-icon { display: none !important; }
+        }
+        .print-header, .print-footer { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="no-print">
+        <%- include('nav') %>
+    </div>
+
+    <main class="container mx-auto px-4 py-12 max-w-4xl text-center print:text-left">
+        <div class="bg-white rounded-[3rem] p-8 md:p-16 shadow-2xl border border-slate-100 main-card">
+            
+            <!-- Invoice Header (Only for Print) -->
+            <div class="print-header">
+                <div class="text-left">
+                    <h1 class="text-2xl font-black text-slate-900">SHAHAB<span class="text-blue-600">MOBILE</span></h1>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Premium Device Store</p>
+                </div>
+                <div class="text-right">
+                    <h2 class="text-xl font-black">INVOICE</h2>
+                    <p class="text-sm font-bold">#<%= order.orderId %></p>
+                    <p class="text-[10px] text-slate-400"><%= new Date(order.createdAt).toLocaleDateString() %></p>
+                </div>
+            </div>
+
+            <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce check-icon">
+                <i class="fas fa-check text-4xl"></i>
+            </div>
+            <h1 class="text-4xl font-black mb-2">Order Confirmed!</h1>
+            <p class="text-slate-400 mb-12">Your order <span class="text-blue-600 font-bold">#<%= order.orderId %></span> is being processed.</p>
+
+            <!-- Status Tracker (Hidden in Print) -->
+            <% 
+                const steps = ['Pending', 'Packed', 'Ready for Delivery', 'Out for Delivery', 'Shipped'];
+                const currentIndex = steps.indexOf(order.status);
+                const progress = (currentIndex / (steps.length - 1)) * 100;
+            %>
+            <div class="relative mb-20 px-4 status-tracker">
+                <div class="status-line"></div>
+                <div class="status-line-fill" style="width: <%= progress %>%"></div>
+                <div class="flex justify-between relative z-10">
+                    <% steps.forEach((step, idx) => { %>
+                        <div class="flex flex-col items-center">
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center border-4 border-white shadow-md transition-colors duration-500 <%= idx <= currentIndex ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-400' %>">
+                                <i class="fas <%= idx === 0 ? 'fa-clock' : idx === 1 ? 'fa-box' : idx === 2 ? 'fa-truck-loading' : idx === 3 ? 'fa-shipping-fast' : 'fa-hand-holding-heart' %> text-sm"></i>
+                            </div>
+                            <p class="text-[8px] md:text-[10px] font-black uppercase mt-3 tracking-tighter <%= idx <= currentIndex ? 'text-blue-600' : 'text-slate-300' %>"><%= step %></p>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left bg-slate-50 p-8 rounded-3xl border border-slate-100">
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Customer Details</h4>
+                    <p class="font-bold text-slate-800"><%= order.customerName %></p>
+                    <p class="text-sm text-slate-500"><%= order.customerPhone %></p>
+                    <p class="text-sm text-slate-500 mt-2"><%= order.customerAddress %></p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Order Summary</h4>
+                    <div class="space-y-3 mb-6 border-b border-slate-200 pb-4">
+                        <% order.items.forEach(item => { %>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-slate-600 font-medium"><%= item.name %> <span class="text-blue-600 font-bold ml-1">x<%= item.quantity %></span></span>
+                                <span class="font-black text-slate-800">Rs. <%= (item.price * item.quantity).toLocaleString() %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Subtotal</span>
+                        <span class="font-bold text-sm">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Delivery</span>
+                        <span class="text-green-500 font-black text-xs">FREE</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded-xl print:bg-white print:p-0">
+                        <span class="text-lg font-black text-slate-900">Total Amount</span>
+                        <span class="text-2xl font-black text-blue-600">Rs. <%= order.totalAmount.toLocaleString() %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center no-print">
+                <a href="/" class="bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold hover:bg-slate-800 transition">Continue Shopping</a>
+                <button onclick="window.print()" class="bg-white border border-slate-200 px-10 py-5 rounded-2xl font-bold hover:bg-slate-50 transition">Print Invoice</button>
+            </div>
+
+            <!-- Print Footer -->
+            <div class="print-footer">
+                <p>This is a computer generated invoice. No signature required.</p>
+                <p>Thank you for shopping with Shahab Mobile!</p>
+            </div>
+        </div>
+        
+        <div class="mt-12 text-slate-400 text-sm no-print">
+            <p>Need help? WhatsApp us at <strong>+92 342 0475187</strong></p>
+        </div>
+    </main>
+
+    <div class="no-print">
+        <%- include('footer') %>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>

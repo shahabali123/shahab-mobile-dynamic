@@ -1,16 +1,8 @@
-const CACHE_NAME = 'shahab-mobile-cache-v5'; // Version update for instant refresh
+const CACHE_NAME = 'shahab-mobile-cache-v6'; // Version update
 const urlsToCache = [
     './',
-    './index.html',
-    './product.html', // Added for single product page
-    './offers.html',
-    './installments.html',
     './manifest.json',
     './app.js',
-    './products.js',
-    './hero.js',
-    './images/logo.png',
-    './images/tecno-spark-go-3.webp',
     'https://cdn.tailwindcss.com'
     // Add other critical assets here (e.g., main CSS, common images)
 ];

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <%- include('head') %>
+</head>
+<body class="bg-[#f8fafc] text-slate-900">
+
+    <%- include('nav') %>
+
+    <div class="container mx-auto px-6 py-12">
+        <!-- Installment Banner -->
+        <div class="bg-slate-900 rounded-[2rem] p-8 md:p-16 text-white mb-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
+            <div class="relative z-10 flex-1">
+                <span class="bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block"><%= settings.instHeroBadge %></span>
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-6"><%= settings.instHeroTitle %></h2>
+                <p class="text-slate-400 max-w-2xl text-lg"><%= settings.instHeroDescription %></p>
+                <div class="mt-8 flex gap-6">
+                    <div class="flex items-center gap-2 text-sm font-bold"><i class="fas fa-check-circle text-green-500"></i> <span><%= settings.instHeroAdvanceText %></span></div>
+                    <div class="flex items-center gap-2 text-sm font-bold"><i class="fas fa-check-circle text-green-500"></i> <span><%= settings.instHeroPlanSummary %></span></div>
+                </div>
+            </div>
+            <i class="fas fa-hand-holding-usd absolute -right-10 -bottom-10 text-[15rem] text-white opacity-5 rotate-12"></i>
+        </div>
+
+        <!-- Requirements Section -->
+        <div class="mb-16 bg-white border-2 border-blue-100 rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-blue-50">
+            <h3 class="text-2xl md:text-3xl font-black text-slate-900 mb-10 flex items-center gap-4">
+                <div class="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-sm">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                Installment Ke Liye Zaroori Requirements
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="flex gap-5">
+                    <div class="text-blue-600 text-2xl mt-1"><i class="fas fa-user-clock"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-1">Umar (Age)</h4>
+                        <p class="text-slate-500 text-sm">Customer ki umar 18 se 60 saal honi chahiye.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <div class="text-blue-600 text-2xl mt-1"><i class="fas fa-id-card"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-1">Zaroori Kagazat</h4>
+                        <p class="text-slate-500 text-sm">CNIC aur taza Electricity Bill sath layein.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <div class="text-blue-600 text-2xl mt-1"><i class="fas fa-users"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-lg mb-1">Guaranters</h4>
+                        <p class="text-slate-500 text-sm">2 Guaranters ke asli CNIC lazmi hain.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+            <h2 class="text-2xl font-bold text-slate-800">Available on Installments</h2>
+            
+            <!-- Brand Filter -->
+            <form action="/installments" method="GET" class="w-full md:w-64">
+                <select name="brand" onchange="this.form.submit()" class="w-full bg-white border border-slate-200 p-3 rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700">
+                    <option value="">All Brands</option>
+                    <% brands.forEach(b => { %>
+                        <option value="<%= b %>" <%= selectedBrand === b ? 'selected' : '' %>><%= b %></option>
+                    <% }) %>
+                </select>
+            </form>
+        </div>
+
+        <!-- Filtered Product Grid with Installment Inquiries -->
+        <main class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="product-grid">
+            <% products.forEach(function(product) { %>
+                <%- include('card', { product: product, isInstallmentsPage: true }) %>
+            <% }); %>
+        </main>
+
+        <%- include('pagination') %>
+    </div>
+
+    <%- include('footer') %>
+
+    <script src="/app.js"></script>
+</body>
+</html>
