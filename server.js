@@ -32,6 +32,9 @@ if (!process.env.CLOUDINARY_API_KEY) {
     console.error('❌ Cloudinary keys missing in .env file!');
 }
 
+// Disable Mongoose buffering: Agar connection nahi hai toh queries wait nahi karengi
+mongoose.set('bufferCommands', false);
+
 // 0. MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
     serverSelectionTimeoutMS: 5000, // 5 seconds mein connect na ho toh fail karein
@@ -77,7 +80,7 @@ app.use(async (req, res, next) => {
         res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
         // Database checks (Only if connected)
-        if (mongoose.connection.readyState === 1) {
+        if (mongoose.connection.readyState === 1 && SiteSetting.db.readyState === 1) {
             // Track visits (upsert used to avoid crashes)
             const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
             if (!isAsset && req.method === 'GET') {
@@ -96,6 +99,14 @@ app.use(async (req, res, next) => {
                     isReadByCustomer: false 
                 });
             }
+        } else {
+            // Agar DB connect nahi hai toh routes ko query karne se rokna behtar hai
+            const dbErrorRoutes = ['/', '/offers', '/installments', '/admin', '/profile'];
+            if (dbErrorRoutes.includes(req.path) || req.path.startsWith('/product/')) {
+                const err = new Error("Database connection is not ready yet. Please check MONGO_URI and Network Access (IP Whitelist).");
+                err.status = 500;
+                return next(err);
+            }
         }
         
         next();
@@ -107,10 +118,10 @@ app.use(async (req, res, next) => {
 
 // 1. EJS View Engine Setup
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, './')); // Ensure path resolution for Vercel
+app.set('views', path.resolve(__dirname)); // Absolute path lookup for Vercel
 
 // 2. Static Files Middleware
-app.use(express.static(path.join(__dirname, './')));
+app.use(express.static(path.resolve(__dirname)));
 
 // 3. Use Modular Routes
 app.use('/', productRoutes);
@@ -132,14 +143,16 @@ app.use((req, res, next) => {
 });
 
 // 5. Global 500 Error Handler
-app.use((err, req, res, next) => {
-    console.error('🔥 Detailed Server Error:', err);
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    console.error('🔥 Detailed Server Error:', err.message);
+    console.error(err.stack);
+    
     // Ab generic message ke bajaye asal error message screen par ayega
     res.status(500).send(`
         <div style="padding: 20px; font-family: sans-serif; line-height: 1.6;">
-            <h1 style="color: #e11d48;">Server Error (500)</h1>
+            <h1 style="color: #e11d48; margin-bottom: 10px;">Server Error (500)</h1>
             <p><strong>Message:</strong> ${err.message}</p>
-            <p><strong>Note:</strong> Agar ye error 'MONGO_URI' ya 'buffering timed out' se mutalliq hai, toh check karein ke MongoDB Atlas mein Network Access (0.0.0.0/0) enabled hai ya nahi.</p>
+            <p><strong>Possible Cause:</strong> Agar ye 'Failed to lookup view' hai, toh check karein ke sab .ejs files root directory mein hain aur vercel.json sahi configured hai.</p>
             <hr>
             <p style="font-size: 12px; color: #64748b;">Shahab Mobile Debugging Mode</p>
         </div>
