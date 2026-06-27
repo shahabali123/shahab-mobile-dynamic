@@ -145,22 +145,6 @@ app.use('/', productRoutes);
 // 3. Static Files Middleware (Routes ke baad)
 app.use(express.static(path.resolve(__dirname)));
 
-// 4. Export for Vercel
-module.exports = app;
-
-// 4. 404 Error Handler (Keep this after all routes)
-app.use((req, res, next) => {
-    res.status(404).render('index', {
-        products: [], 
-        brands: [],
-        selectedBrand: '',
-        title: "404 - Not Found",
-        currentPage: 1,
-        totalPages: 0,
-        baseUrl: '/'
-    });
-});
-
 // 5. Global 500 Error Handler
 app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     console.error('🔥 Detailed Server Error:', err.message);
@@ -177,3 +161,13 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
         </div>
     `);
 });
+
+// 4. 404 Error Handler (Keep this after all routes and middleware)
+app.use((req, res, next) => {
+    res.status(404).render('404', { // Assuming you have a 404.ejs file
+        title: "404 - Page Not Found"
+    });
+});
+
+// 6. Export for Vercel (Must be the last thing)
+module.exports = app;
