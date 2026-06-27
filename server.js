@@ -76,6 +76,16 @@ app.use(session({
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days validity
 }));
 
+// Database Connection Middleware (Run before all routes)
+// Yeh middleware har request ko aage barhne se pehle DB connection ka intezar karwayega.
+app.use(async (req, res, next) => {
+    // Agar connection state 'connected' (1) nahi hai, to promise ke resolve hone ka wait karein.
+    if (mongoose.connection.readyState !== 1) {
+        await dbPromise;
+    }
+    next();
+});
+
 // Global Settings Middleware
 app.use(async (req, res, next) => {
     // Basic locals available on every request
@@ -87,8 +97,6 @@ app.use(async (req, res, next) => {
     // Sirf Admin routes ke liye extra data fetch karein
     if (req.path.startsWith('/admin')) {
         try {
-            if (mongoose.connection.readyState !== 1) await dbPromise;
-            
             const settings = await SiteSetting.findOne({ key: 'main' });
             res.locals.settings = settings || { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
             res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
@@ -106,7 +114,6 @@ app.use(async (req, res, next) => {
     // Customer ke liye unread messages count fetch karein
     if (req.session.customer) {
         try {
-            if (mongoose.connection.readyState !== 1) await dbPromise;
             res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ userId: req.session.customer._id, isReadByCustomer: false });
         } catch (err) {
             console.error("⚠️ Unread Inquiries Middleware Error:", err.message);
