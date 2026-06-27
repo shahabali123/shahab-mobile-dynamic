@@ -34,7 +34,7 @@ if (!process.env.CLOUDINARY_API_KEY) {
 
 // Disable Mongoose buffering: Agar connection nahi hai toh queries wait nahi karengi
 // Vercel par isay false rakhna behtar hai taake timeout errors jaldi milain
-mongoose.set('bufferCommands', false); 
+mongoose.set('bufferCommands', false);
 
 // Log the MONGO_URI to Vercel logs for verification (only first 50 chars for security)
 console.log('Attempting to connect to MongoDB with URI (first 50 chars):', process.env.MONGO_URI.substring(0, 50) + '...');
@@ -42,18 +42,26 @@ console.log('Attempting to connect to MongoDB with URI (first 50 chars):', proce
 // 0. MongoDB Connection
 // Isay ek variable mein save kar letay hain taake middleware mein await kiya ja sakay
 let dbPromise = mongoose.connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 10000,
-})
-    .then(() => {
-        console.log('✅ Successfully connected to MongoDB Atlas');
-    })
-    .catch(err => {
-        // Vercel par, agar DB connect na ho to app ko crash karna behtar hai.
-        // Is se "Application Error" ka wazeh message ayega aur logs mein foran pata chalega.
-        console.error('❌ FATAL: MongoDB Connection Failed:', err.message);
-        process.exit(1); // Exit the process with a failure code
-    });
+    serverSelectionTimeoutMS: 5000, // Keep this for initial connection attempts
+    connectTimeoutMS: 10000, // Keep this for initial connection attempts
+});
+
+// Handle initial connection success/failure for logging
+dbPromise.then(() => {
+    console.log('✅ Initial MongoDB connection promise resolved.');
+}).catch(err => {
+    console.error('❌ Initial MongoDB connection promise rejected:', err.message);
+    // No process.exit(1) here, let the Vercel export function handle it for each request
+});
+
+// Mongoose connection events for robustness (optional, but good for debugging)
+mongoose.connection.on('connected', () => console.log('MongoDB connection established.'));
+mongoose.connection.on('error', (err) => console.error('MongoDB connection error:', err));
+mongoose.connection.on('disconnected', () => console.warn('MongoDB disconnected!'));
+
+// This function will ensure connection is ready for each request.
+// It will be called inside the exported serverless function.
+async function ensureDbConnection() { await dbPromise; }
 
 // Local Development ke liye listen (Vercel isay ignore karega)
 if (process.env.NODE_ENV !== 'production') {
@@ -76,16 +84,6 @@ app.use(session({
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days validity
 }));
 
-// Database Connection Middleware (Run before all routes)
-// Yeh middleware har request ko aage barhne se pehle DB connection ka intezar karwayega.
-app.use(async (req, res, next) => {
-    // Agar connection state 'connected' (1) nahi hai, to promise ke resolve hone ka wait karein.
-    if (mongoose.connection.readyState !== 1) {
-        await dbPromise;
-    }
-    next();
-});
-
 // Global Settings Middleware
 app.use(async (req, res, next) => {
     // Basic locals available on every request
@@ -97,7 +95,7 @@ app.use(async (req, res, next) => {
     // Sirf Admin routes ke liye extra data fetch karein
     if (req.path.startsWith('/admin')) {
         try {
-            const settings = await SiteSetting.findOne({ key: 'main' });
+            const settings = await SiteSetting.findOne({ key: 'main' }).lean(); // .lean() for performance
             res.locals.settings = settings || { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
             res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
             res.locals.pendingInquiriesCount = await Inquiry.countDocuments({ status: 'Pending' });
@@ -114,7 +112,7 @@ app.use(async (req, res, next) => {
     // Customer ke liye unread messages count fetch karein
     if (req.session.customer) {
         try {
-            res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ userId: req.session.customer._id, isReadByCustomer: false });
+            res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ userId: req.session.customer._id, isReadByCustomer: false }); // No .lean() needed here
         } catch (err) {
             console.error("⚠️ Unread Inquiries Middleware Error:", err.message);
             res.locals.unreadInquiriesCount = 0;
@@ -158,5 +156,23 @@ app.use((req, res, next) => {
     });
 });
 
-// 6. Export for Vercel (Must be the last thing)
-module.exports = app;
+// 6. Export for Vercel (Must be the last thing, and handle connection)
+let cachedApp = null;
+
+module.exports = async (req, res) => {
+    // On cold start, or if app not cached, initialize
+    if (!cachedApp) {
+        console.log('Vercel Cold Start: Initializing app and ensuring DB connection...');
+        try {
+            await ensureDbConnection(); // Ensure DB connection is ready
+            cachedApp = app; // Cache the Express app instance
+            console.log('Vercel Cold Start: App initialized and DB connected.');
+        } catch (error) {
+            console.error('Vercel Cold Start Error during DB connection:', error);
+            res.status(500).send('Server initialization failed due to database connection error.');
+            return;
+        }
+    }
+    // Use the cached app to handle the request
+    return cachedApp(req, res);
+};
