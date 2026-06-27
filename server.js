@@ -78,66 +78,43 @@ app.use(session({
 
 // Global Settings Middleware
 app.use(async (req, res, next) => {
-    try {
-        // Fallback defaults in case DB is not ready
-        res.locals.settings = { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
-        res.locals.pendingOrdersCount = 0;
-        res.locals.pendingInquiriesCount = 0;
-        res.locals.unreadInquiriesCount = 0;
-        res.locals.activePath = req.path;
-        res.locals.admin = req.session.admin || null;
-        res.locals.customer = req.session.customer || null;
-        res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    // Basic locals available on every request
+    res.locals.activePath = req.path;
+    res.locals.admin = req.session.admin || null;
+    res.locals.customer = req.session.customer || null;
+    res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
-        // Vercel Serverless Fix: Agar connection ready nahi hai, toh intezar karein
-        if (mongoose.connection.readyState !== 1) {
-            console.log('⏳ Database not ready, awaiting connection...');
-            await dbPromise;
-        }
-
-        // Check again after awaiting
-        if (mongoose.connection.readyState === 1) {
-            // Track visits (upsert used to avoid crashes)
-            const isAsset = req.path.includes('.') || req.path.startsWith('/admin') || req.path.startsWith('/login');
-            if (!isAsset && req.method === 'GET') {
-                await SiteSetting.updateOne({ key: 'main' }, { $inc: { siteVisits: 1 } }, { upsert: true });
-            }
-
-            let settings = await SiteSetting.findOne({ key: 'main' });
-            if (settings) res.locals.settings = settings;
+    // Sirf Admin routes ke liye extra data fetch karein
+    if (req.path.startsWith('/admin')) {
+        try {
+            if (mongoose.connection.readyState !== 1) await dbPromise;
             
+            const settings = await SiteSetting.findOne({ key: 'main' });
+            res.locals.settings = settings || { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
             res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
             res.locals.pendingInquiriesCount = await Inquiry.countDocuments({ status: 'Pending' });
-            
-            if (req.session.customer) {
-                res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ 
-                    userId: req.session.customer._id, 
-                    isReadByCustomer: false 
-                });
-            }
-        } else {
-            // Agar DB connect nahi hai toh routes ko query karne se rokna behtar hai
-            const dbErrorRoutes = ['/', '/offers', '/installments', '/admin', '/profile', '/product']; // Added /product base
-            // Check if the current path starts with any of the critical routes
-            const isCriticalRoute = dbErrorRoutes.some(route => req.path.startsWith(route));
 
-            // Also check if MONGO_URI is actually present, as it might be empty on Vercel sometimes
-            if (!process.env.MONGO_URI || process.env.MONGO_URI.length < 10) { // Double check MONGO_URI here
-                const err = new Error("FATAL: MONGO_URI is missing or invalid during request. Check Vercel Environment Variables.");
-                err.status = 500;
-                return next(err);
-            } else if (isCriticalRoute) {
-                const err = new Error("Database connection is not ready yet. Please check MONGO_URI and Network Access (IP Whitelist).");
-                err.status = 500;
-                return next(err);
-            }
+        } catch (err) {
+            console.error("⚠️ Admin Settings Middleware Error:", err.message);
+            // Fallback defaults
+            res.locals.settings = { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
+            res.locals.pendingOrdersCount = 0;
+            res.locals.pendingInquiriesCount = 0;
         }
-        
-        next();
-    } catch (err) {
-        console.error("⚠️ Settings Middleware Error:", err.message);
-        next(); // Move forward even if settings fail
     }
+
+    // Customer ke liye unread messages count fetch karein
+    if (req.session.customer) {
+        try {
+            if (mongoose.connection.readyState !== 1) await dbPromise;
+            res.locals.unreadInquiriesCount = await Inquiry.countDocuments({ userId: req.session.customer._id, isReadByCustomer: false });
+        } catch (err) {
+            console.error("⚠️ Unread Inquiries Middleware Error:", err.message);
+            res.locals.unreadInquiriesCount = 0;
+        }
+    }
+    
+    next();
 });
 
 // 1. EJS View Engine Setup
