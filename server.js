@@ -48,7 +48,12 @@ let dbPromise = mongoose.connect(process.env.MONGO_URI, {
     .then(() => {
         console.log('✅ Successfully connected to MongoDB Atlas');
     })
-    .catch(err => console.error('❌ MongoDB Connection Error:', err.message));
+    .catch(err => {
+        // Vercel par, agar DB connect na ho to app ko crash karna behtar hai.
+        // Is se "Application Error" ka wazeh message ayega aur logs mein foran pata chalega.
+        console.error('❌ FATAL: MongoDB Connection Failed:', err.message);
+        process.exit(1); // Exit the process with a failure code
+    });
 
 // Local Development ke liye listen (Vercel isay ignore karega)
 if (process.env.NODE_ENV !== 'production') {
