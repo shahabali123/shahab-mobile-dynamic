@@ -34,7 +34,7 @@ if (!process.env.CLOUDINARY_API_KEY) {
 
 // Disable Mongoose buffering: Agar connection nahi hai toh queries wait nahi karengi
 // Vercel par isay false rakhna behtar hai taake timeout errors jaldi milain
-mongoose.set('bufferCommands', true); 
+mongoose.set('bufferCommands', false); 
 
 // Log the MONGO_URI to Vercel logs for verification (only first 50 chars for security)
 console.log('Attempting to connect to MongoDB with URI (first 50 chars):', process.env.MONGO_URI.substring(0, 50) + '...');
