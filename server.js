@@ -92,18 +92,26 @@ app.use(async (req, res, next) => {
     res.locals.customer = req.session.customer || null;
     res.locals.cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
+    try {
+        // Fetch global site settings for ALL requests
+        const settings = await SiteSetting.findOne({ key: 'main' }).lean();
+        res.locals.settings = settings || { heroBrandName: "SHAHAB MOBILE", logo: 'logo-placeholder.png' }; // Use a placeholder
+    } catch (err) {
+        console.error("⚠️ Global Settings Middleware Error:", err.message);
+        // Fallback defaults in case of DB error
+        res.locals.settings = { heroBrandName: "SHAHAB MOBILE", logo: 'logo-placeholder.png' };
+    }
+
     // Sirf Admin routes ke liye extra data fetch karein
     if (req.path.startsWith('/admin')) {
         try {
-            const settings = await SiteSetting.findOne({ key: 'main' }).lean(); // .lean() for performance
-            res.locals.settings = settings || { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
+            // Admin-specific data
             res.locals.pendingOrdersCount = await Order.countDocuments({ status: 'Pending' });
             res.locals.pendingInquiriesCount = await Inquiry.countDocuments({ status: 'Pending' });
 
         } catch (err) {
             console.error("⚠️ Admin Settings Middleware Error:", err.message);
-            // Fallback defaults
-            res.locals.settings = { heroBrandName: "SHAHAB MOBILE", logo: 'logo' };
+            // Fallback defaults for admin-specific data
             res.locals.pendingOrdersCount = 0;
             res.locals.pendingInquiriesCount = 0;
         }
